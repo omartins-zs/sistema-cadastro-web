@@ -1,0 +1,3 @@
+CREATE TABLE `escola`.`usuarios` ( `id` INT NOT NULL AUTO_INCREMENT , `usuario` VARCHAR(120) NOT NULL , `senha` VARCHAR(50) NOT NULL , `email` VARCHAR(50) NOT NULL , `nivel` VARCHAR(120) NOT NULL , PRIMARY KEY (`id`), UNIQUE (`email`)) ENGINE = InnoDB;
+
+INSERT INTO `usuarios` (`id`, `usuario`, `senha`, `email`, `nivel`) VALUES (NULL, 'Alberto', '123', 'alberto@email.com', 'Admin')
