@@ -9,4 +9,10 @@ $sql_logar = mysqli_query($conn, " SELECT * FROM usuarios WHERE usuario='$usuari
 
 if (mysqli_num_rows($sql_logar) != 0) {
     header('Location : home.php');
+} else {
+
+    echo "<script>
+        alert('Usuario nao cadastrado no sistema');
+        window.location.href='index.php';
+    </script>";
 }
