@@ -21,6 +21,26 @@ include_once('conexao.php');
 
         <h1>Usuarios cadastrados no Sistema</h1>
 
+        <hr>
+        <table rules="all">
+            <thead>
+                <th>Usuarios</th>
+                <th>Senha</th>
+                <th>Email</th>
+                <th>Nivel</th>
+            </thead>
+            <tbody>
+                <?php
+
+
+                ?>
+            </tbody>
+            <td>
+                <tr>
+
+                </tr>
+            </td>
+        </table>
     </center>
 
 </body>
