@@ -8,3 +8,15 @@ $email = $_POST['txt_email'];
 $nivel = $_POST['txt_nivel'];
 
 $sql_cadastro = mysqli_query($conn, "INSERT INTO usuarios ( usuario, senha, email, nivel) VALUES ( '$usuario', '$senha', '$email', '$nivel')");
+
+if ($sql_cadastro == true) {
+    echo "<script>
+        alert('Usuario cadastrado com Sucesso!!');
+        window.location.href='index.php';
+    </script>";
+} else {
+    echo "<script>
+        alert('Falha no cadastro de usuario!');
+        window.location.href='cadastroUsuario.php';
+    </script>";
+}
