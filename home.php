@@ -12,9 +12,23 @@
 </head>
 
 <body>
+    <center>
 
-    <h1>Bem vindo ao Sistema</h1>
+        <h1>Bem vindo ao Sistema</h1>
 
+    </center>
+
+    <ul>
+        <a href="listarUsuarios.php">
+            <li>Usuarios</li>
+        </a>
+        <a href="listarCursos.php">
+            <li>Cursos</li>
+        </a>
+        <a href="listarAlunos.php">
+            <li>Alunos</li>
+        </a>
+    </ul>
 
 </body>
 
