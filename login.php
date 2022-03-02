@@ -8,7 +8,7 @@ $senha = $_POST['txt_senha'];
 $sql_logar = mysqli_query($conn, " SELECT * FROM usuarios WHERE usuario='$usuario' and '$senha'");
 
 if (mysqli_num_rows($sql_logar) != 0) {
-    header('Location : home.php');
+    header('Location: home.php');
 } else {
 
     echo "<script>
