@@ -24,24 +24,19 @@ include_once('conexao.php');
         <hr>
         <table rules="all">
             <thead>
-                <th>Usuarios</th>
-                <th>Senha</th>
-                <th>Email</th>
-                <th>Nivel</th>
+                <tr>
+                    <th>Usuarios</th>
+                    <th>Senha</th>
+                    <th>Email</th>
+                    <th>Nivel</th>
+                </tr>
             </thead>
             <tbody>
                 <?php
 
+                $sql_consulta = mysqli_query($conn, "SELECT * FROM usuarios");
 
-                ?>
-            </tbody>
-            <td>
-                <tr>
 
-                </tr>
-            </td>
-        </table>
-    </center>
 
 </body>
 
