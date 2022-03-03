@@ -51,7 +51,7 @@ include_once('conexao.php');
                         <a href="excluir.php?codigo=<?= $dados[0] ?>">Excluir</a>
                     </td>
                     <td>
-                        <a href="editar.php">Editar</a>
+                        <a href="editar.php?codigo=<?= $dados[0] ?>">Editar</a>
                     </td>
                 </tr>
 
