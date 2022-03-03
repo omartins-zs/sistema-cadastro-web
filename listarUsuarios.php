@@ -25,17 +25,32 @@ include_once('conexao.php');
         <table rules="all">
             <thead>
                 <tr>
-                    <th>Usuarios</th>
+                    <th>Usuario</th>
                     <th>Senha</th>
                     <th>Email</th>
                     <th>Nivel</th>
                 </tr>
             </thead>
+
             <tbody>
                 <?php
 
-                $sql_consulta = mysqli_query($conn, "SELECT * FROM usuarios");
+                $sql_consulta = mysqli_query($conn, " SELECT * FROM usuarios ");
 
+                while ($dados = mysqli_fetch_array($sql_consulta)) {
+                ?>
+
+                <tr>
+                    <td> <?= $dados[1] ?> </td>
+                    <td> <?= $dados[2] ?> </td>
+                    <td> <?= $dados[3] ?> </td>
+                    <td> <?= $dados[4] ?> </td>
+                </tr>
+
+                <?php } ?>
+            </tbody>
+        </table>
+    </center>
 
 
 </body>
