@@ -48,6 +48,9 @@ include_once('conexao.php');
                     <td>
                         <a href="eliminar.php">Excluir</a>
                     </td>
+                    <td>
+                        <a href="editar.php">Editar</a>
+                    </td>
                 </tr>
 
                 <?php } ?>
