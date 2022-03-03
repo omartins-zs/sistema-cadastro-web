@@ -37,6 +37,8 @@ include_once('conexao.php');
 
                 $sql_consulta = mysqli_query($conn, " SELECT * FROM usuarios ");
 
+                $total_registros = mysqli_num_rows($sql_consulta);
+
                 while ($dados = mysqli_fetch_array($sql_consulta)) {
                 ?>
 
@@ -54,6 +56,9 @@ include_once('conexao.php');
                 </tr>
 
                 <?php } ?>
+                <tr>
+                    <td colspan="6">Total: <?= $total_registros ?> </td>
+                </tr>
             </tbody>
         </table>
     </center>
