@@ -4,14 +4,11 @@ require_once('conexao.php');
 
 $id = $_GET['codigo'];
 
-$sql_consulta = mysqli_query($conn, " SELECT * FROM usuarios WHERE id='$id'");
+$sql_consulta = mysqli_query($conn, "SELECT *FROM usuarios where id='$id' ");
 
 $dados = mysqli_fetch_array($sql_consulta);
 
-
 ?>
-
-
 
 
 <!DOCTYPE html>
@@ -38,27 +35,32 @@ $dados = mysqli_fetch_array($sql_consulta);
         <hr>
         <form class="login" action="atualizar.php" method="post">
 
-            <input type="hidden" name="codigo" value="<?php $dados[0] ?>"> <br>
-            Usuário: <br>
-            <input type="text" name="txt_usuario" value="<?php $dados[1] ?>"> <br>
-            Senha: <br>
-            <input type="password" name="txt_senha" id="" value="<?php $dados[2] ?>"> <br>
+            <input type="hidden" name="codigo" value="<?= $dados[0] ?>">
+
+            <label for="nome">Nome:</label>
             <br>
-            Email: <br>
-            <input type="email" name="txt_email" id="" value="<?php $dados[3] ?>"> <br>
+            <input type="text" name="txt_usuario" value="<?= $dados[1] ?>">
             <br>
-            Nivel: <br>
+            <label for="senha">Senha:</label>
+            <br>
+            <input type="password" name="txt_senha" value="<?= $dados[2] ?>">
+            <br>
+            <label for="mail">E-mail:</label>
+            <br>
+            <input type="email" name="txt_email" value="<?= $dados[3] ?>">
+            <br>
+            <br>
+            <label for="text">Nivel:</label>
             <select name="nivel" id="">
-                <option value='<?php $dados[4] ?>'><?php $dados[4] ?></option>
+                <option <?= $dados[4] ?>><?= $dados[4] ?></option>
                 <option value="Prof">Professor</option>
                 <option value="Aluno">Aluno</option>
-            </select> <br>
+            </select>
+            <br> <br>
+
+            <input type="submit" value="Atualizar">
             <br>
 
-
-            <input type="submit" value="Atualizar"> <br>
-            <br>
-            <a href="./index.php">Logar</a>
         </form>
     </center>
 

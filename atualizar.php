@@ -9,7 +9,7 @@ $senha = $_POST['txt_senha'];
 $email = $_POST['txt_email'];
 $nivel = $_POST['nivel'];
 
-$sql_atualizar = mysqli_query($conn, "UPDATE usuarios set usuario='$usuario', senha='$senha', email='$email', nivel='$nivel' WHERE id='$id'");
+$sql_atualizar = mysqli_query($conn, " UPDATE usuarios SET usuario='$usuario', senha='$senha', email='$email', nivel='$nivel' WHERE id='$id'");
 
 if ($sql_atualizar == true) {
     echo "<script>
