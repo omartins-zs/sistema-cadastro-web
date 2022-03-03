@@ -61,6 +61,12 @@ include_once('conexao.php');
                 </tr>
             </tbody>
         </table>
+
+        <hr>
+        <a href="index.php">Voltar</a><br>
+        <a href="pdf.php">Imprimir</a>
+
+
     </center>
 
 
