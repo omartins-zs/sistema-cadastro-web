@@ -38,6 +38,7 @@ $dados = mysqli_fetch_array($sql_consulta);
         <hr>
         <form class="login" action="atualizar.php" method="post">
 
+            <input type="hidden" name="codigo" value="<?php $dados[0] ?>"> <br>
             Usuário: <br>
             <input type="text" name="txt_usuario" value="<?php $dados[1] ?>"> <br>
             Senha: <br>
