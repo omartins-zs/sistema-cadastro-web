@@ -27,8 +27,9 @@ include_once('conexao.php');
 <body>
     <div class="container">
 
-
-        <h1>Usuarios cadastrados no Sistema</h1>
+        <h2 class="text-center">
+            Usuarios cadastrados no Sistema <i class="fa fa-users"></i>
+        </h2>
 
         <hr>
         <div class="table-responsive">
@@ -58,7 +59,8 @@ include_once('conexao.php');
                         <td> <?= $dados[3] ?> </td>
                         <td> <?= $dados[4] ?> </td>
                         <td>
-                            <a href="excluir.php?codigo=<?= $dados[0] ?>">Excluir</a>
+                            <a class="btn btn-danger btn-xs" href="excluir.php?codigo=<?= $dados[0] ?>"><i
+                                    class="fa fa-trash"></i>Excluir</a>
                         </td>
                         <td>
                             <a class="btn btn-warning btn-xs" href="editar.php?codigo=<?= $dados[0] ?>"><i
