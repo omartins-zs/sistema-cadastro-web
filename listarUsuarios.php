@@ -25,6 +25,7 @@ include_once('conexao.php');
 </head>
 
 <body>
+    <br>
     <div class="container">
 
         <h2 class="text-center">
@@ -33,13 +34,14 @@ include_once('conexao.php');
 
         <hr>
         <div class="table-responsive">
-            <table class="table table-hover table-dark">
-                <thead class="thead-dark">
+            <table class="table table-hover table-bordered border-primary">
+                <thead class="table-light">
                     <tr>
                         <th>Usuario</th>
                         <th>Senha</th>
                         <th>Email</th>
                         <th>Nivel</th>
+                        <th colspan="2">Açoes</th>
                     </tr>
                 </thead>
 
@@ -60,11 +62,11 @@ include_once('conexao.php');
                         <td> <?= $dados[4] ?> </td>
                         <td>
                             <a class="btn btn-danger btn-xs" href="excluir.php?codigo=<?= $dados[0] ?>"><i
-                                    class="fa fa-trash"></i>Excluir</a>
+                                    class="fa fa-trash"></i> Excluir</a>
                         </td>
                         <td>
                             <a class="btn btn-warning btn-xs" href="editar.php?codigo=<?= $dados[0] ?>"><i
-                                    class="fa fa-user-edit"></i>Editar</a>
+                                    class="fa fa-user-edit"></i> Editar</a>
                         </td>
                     </tr>
 
@@ -76,10 +78,18 @@ include_once('conexao.php');
             </table>
         </div>
         <hr>
-        <a href="index.php">Voltar</a><br>
-        <a href="relatorioUsuario.php">Imprimir</a>
 
+        <div class="btn-page">
 
+            <a class="btn btn-secondary" href="index.php">
+                <i class="far fa-arrow-alt-circle-left"></i>
+                </i> Voltar
+            </a>
+
+            <a class="btn btn-info" href="relatorioUsuario.php">
+                <i class="fas fa-print"></i> Imprimir
+            </a>
+        </div>
 
     </div>
 

@@ -1,17 +1,8 @@
 Iniciando Projeto Sistema cadastro WEB, Crud PHP
 
 
-Iniciando Projeto Sistema cadastro WEB, Crud PHP
-
-
-
 Listando os dados do banco na página
-
-Arrumando para mostrar todos dados solicitados
 
 
 Ajustes para Gerar Relátório em PDF futuramente
-
-
-
 
