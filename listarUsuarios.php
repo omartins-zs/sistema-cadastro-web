@@ -25,58 +25,61 @@ include_once('conexao.php');
 </head>
 
 <body>
-    <center>
+    <div class="container">
+
 
         <h1>Usuarios cadastrados no Sistema</h1>
 
         <hr>
-        <table rules="all">
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Senha</th>
-                    <th>Email</th>
-                    <th>Nivel</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
+            <table class="table table-hover table-dark">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Senha</th>
+                        <th>Email</th>
+                        <th>Nivel</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-                <?php
+                <tbody>
+                    <?php
 
-                $sql_consulta = mysqli_query($conn, " SELECT * FROM usuarios ");
+                    $sql_consulta = mysqli_query($conn, " SELECT * FROM usuarios ");
 
-                $total_registros = mysqli_num_rows($sql_consulta);
+                    $total_registros = mysqli_num_rows($sql_consulta);
 
-                while ($dados = mysqli_fetch_array($sql_consulta)) {
-                ?>
+                    while ($dados = mysqli_fetch_array($sql_consulta)) {
+                    ?>
 
-                <tr>
-                    <td> <?= $dados[1] ?> </td>
-                    <td> <?= $dados[2] ?> </td>
-                    <td> <?= $dados[3] ?> </td>
-                    <td> <?= $dados[4] ?> </td>
-                    <td>
-                        <a href="excluir.php?codigo=<?= $dados[0] ?>">Excluir</a>
-                    </td>
-                    <td>
-                        <a href="editar.php?codigo=<?= $dados[0] ?>">Editar</a>
-                    </td>
-                </tr>
+                    <tr>
+                        <td> <?= $dados[1] ?> </td>
+                        <td> <?= $dados[2] ?> </td>
+                        <td> <?= $dados[3] ?> </td>
+                        <td> <?= $dados[4] ?> </td>
+                        <td>
+                            <a href="excluir.php?codigo=<?= $dados[0] ?>">Excluir</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-warning btn-xs" href="editar.php?codigo=<?= $dados[0] ?>"><i
+                                    class="fa fa-user-edit"></i>Editar</a>
+                        </td>
+                    </tr>
 
-                <?php } ?>
-                <tr>
-                    <td colspan="6">Total: <?= $total_registros ?> </td>
-                </tr>
-            </tbody>
-        </table>
-
+                    <?php } ?>
+                    <tr>
+                        <td colspan="6">Total: <?= $total_registros ?> </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <hr>
         <a href="index.php">Voltar</a><br>
         <a href="relatorioUsuario.php">Imprimir</a>
 
 
-    </center>
 
+    </div>
 
 </body>
 
