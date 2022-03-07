@@ -13,6 +13,14 @@ include_once('conexao.php');
 
     <link rel="stylesheet" href="./css/style.css">
 
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Fontawesome 5 -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+        integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
     <title>Lista de usuarios</title>
 </head>
 
@@ -64,7 +72,7 @@ include_once('conexao.php');
 
         <hr>
         <a href="index.php">Voltar</a><br>
-        <a href="pdf.php">Imprimir</a>
+        <a href="relatorioUsuario.php">Imprimir</a>
 
 
     </center>
