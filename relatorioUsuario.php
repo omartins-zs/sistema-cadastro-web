@@ -1,61 +1,60 @@
-<?php
 
-use Dompdf\Dompdf;
-// Criando um 
-$dompdf = new Dompdf();
+<?php
 // Conectando com o banco
 require_once('conexao.php');
 
-$HTML = '<table border=1>';
+require 'vendor/autoload.php';
+require_once 'dompdf/autoload.inc.php';
 
-$HTML .= '<thead>';
-$HTML .= '<tr>';
+// reference the Dompdf namespace
+use Dompdf\Dompdf;
 
-$HTML .= '<th> Usuario </th>';
-$HTML .= '<th> Email </th>';
-$HTML .= '<th> Nivel </th>';
+// instantiate and use the dompdf class
+$dompdf = new Dompdf();
+// Gerando os codigos HTML
+$dompdf->loadHtml('
+<h1> Relatorio de teste </h1>
+' . $HTML . '
+');
+$html = '<table border=1>';
 
-$HTML .= '</tr>';
-$HTML .= '<thead>';
+$html .= '<thead>';
+$html .= '<tr>';
+
+$html .= '<th> Usuario </th>';
+$html .= '<th> Email </th>';
+$html .= '<th> Nivel </th>';
+
+$html .= '</tr>';
+$html .= '<thead>';
 
 $lista = mysqli_query($conn, "SELECT * FROM usuarios");
 $total = mysqli_num_rows($lista);
 
 while ($dados = mysqli_fetch_array($lista)) {
 
-    $HTML .= '<tbody>';
-    $HTML .= '<tr>';
-    $HTML .= '<td>' . $dados['1'] . "</td>";
-    $HTML .= '<td>' . $dados['3'] . "</td>";
-    $HTML .= '<td>' . $dados['4'] . "</td>";
-    $HTML .= '</tr>';
-    $HTML .= '</tbody>';
+    $html .= '<tbody>';
+    $html .= '<tr>';
+    $html .= '<td>' . $dados['1'] . "</td>";
+    $html .= '<td>' . $dados['3'] . "</td>";
+    $html .= '<td>' . $dados['4'] . "</td>";
+    $html .= '</tr>';
+    $html .= '</tbody>';
 };
 
-$HTML .= '</table>';
-
-// Incluindo o documento dompdf
-// include autoloader
-require_once 'dompdf/autoload.inc.php';
+$html .= '</table>';
 
 
-// Gerando os codigos HTML
-$dompdf->loadHtml('
 
-<h1> Relatorio de teste </h1>
-' . $HTML . '
+// (Optional) Setup the paper size and orientation
+$dompdf->setPaper('A4', 'landscape');
 
-');
-
-// escolhendo a configuração do papel a ser gerado o pdf
-$dompdf->setPaper("A4", "portrait");
-
-// Renderizando HTML
+// Render the HTML as PDF
 $dompdf->render();
 
-// Exibir os dados html ja renderizados
-// informando como será a saída do arquivo pdf
-$dompdf->stream("relatorio.pdf", array("Attachment" => false));
+// Output the generated PDF to Browser
+$dompdf->stream("relatorio-cadastro.pdf", array("Attachment" => false));
 
 
-$dompdf->loadHtml($html);
+$dompdf->loadHtml($HTML);
+
