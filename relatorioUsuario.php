@@ -1,60 +1,59 @@
 
 <?php
-// Conectando com o banco
-require_once('conexao.php');
 
-require 'vendor/autoload.php';
-require_once 'dompdf/autoload.inc.php';
+include_once('conexao.php');
 
-// reference the Dompdf namespace
-use Dompdf\Dompdf;
+$HTML = '<table align="center" border=1>';
+$HTML .= '<thead>';
 
-// instantiate and use the dompdf class
-$dompdf = new Dompdf();
-// Gerando os codigos HTML
-$dompdf->loadHtml('
-<h1> Relatorio de teste </h1>
-' . $HTML . '
-');
-$html = '<table border=1>';
+$HTML .= '<tr>';
 
-$html .= '<thead>';
-$html .= '<tr>';
+$HTML .= '<th> USUÁRIO </th>';
+$HTML .= '<th> SENHA </th>';
+$HTML .= '<th> E-MAIL </th>';
+$HTML .= '<th> NÍVEL </th>';
 
-$html .= '<th> Usuario </th>';
-$html .= '<th> Email </th>';
-$html .= '<th> Nivel </th>';
+$HTML .= '</tr>';
 
-$html .= '</tr>';
-$html .= '<thead>';
+$HTML .= '</thead>';
 
 $lista = mysqli_query($conn, "SELECT * FROM usuarios");
 $total = mysqli_num_rows($lista);
 
 while ($dados = mysqli_fetch_array($lista)) {
 
-    $html .= '<tbody>';
-    $html .= '<tr>';
-    $html .= '<td>' . $dados['1'] . "</td>";
-    $html .= '<td>' . $dados['3'] . "</td>";
-    $html .= '<td>' . $dados['4'] . "</td>";
-    $html .= '</tr>';
-    $html .= '</tbody>';
-};
+    $HTML .= '<tbody>';
 
-$html .= '</table>';
+    $HTML .= '<tr>';
+    $HTML .= '<td>' . $dados['1'] . "</td>";
+    $HTML .= '<td>' . $dados['2'] . "</td>";
+    $HTML .= '<td>' . $dados['3'] . "</td>";
+    $HTML .= '<td>' . $dados['4'] . "</td>";
+    $HTML .= '</tr>';
 
+    $HTML .= '</tbody>';
+}
 
+$HTML .= '</table>';
 
-// (Optional) Setup the paper size and orientation
-$dompdf->setPaper('A4', 'landscape');
+use Dompdf\Dompdf;
 
-// Render the HTML as PDF
+require_once 'dompdf/autoload.inc.php';
+$dompdf = new DOMPDF();
+
+$dompdf->load_html('
+<h1 align="center">RELATORIO DE TESTE</h1>
+' . $HTML . '
+');
+
 $dompdf->render();
+$dompdf->stream(
 
-// Output the generated PDF to Browser
-$dompdf->stream("relatorio-cadastro.pdf", array("Attachment" => false));
+    "Lista de Usuários !!!",
+    array(
+        "Attachment" => FALSE
+    )
 
+);
 
-$dompdf->loadHtml($HTML);
-
+?>
