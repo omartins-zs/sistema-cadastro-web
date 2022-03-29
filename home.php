@@ -8,6 +8,9 @@
 
     <link rel="stylesheet" href="./css/style.css">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+
     <title>Home</title>
 </head>
 
@@ -17,18 +20,20 @@
         <h1>Bem vindo ao Sistema</h1>
 
     </center>
+    <div class="flex-box container-box">
+  <div class="content-box">
+  <div class="btn-list">
 
-    <ul>
-        <a href="listarUsuarios.php">
-            <li>Usuarios</li>
-        </a>
-        <a href="listarCursos.php">
-            <li>Cursos</li>
-        </a>
-        <a href="listarAlunos.php">
-            <li>Alunos</li>
-        </a>
-    </ul>
+        <a class="btn btn-info" href="listarUsuarios.php">Usuarios</a>
+        <a class="btn btn-dark" href="listarCursos.php">Cursos</a>
+        <a class="btn btn-success" href="listarAlunos.php">Alunos</a>
+
+    </div>
+  </div>
+</div>
+  
+    
+    
 
 </body>
 

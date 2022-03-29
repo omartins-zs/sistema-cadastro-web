@@ -4,7 +4,7 @@
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
   text-decoration: none;
-  color: #ffff;
+  color: black;
 }
 
 header {
@@ -223,4 +223,25 @@ main form footer a {
 
 main form footer a:hover {
   color: #18acfe;
+}
+
+.btn-list {
+  justify-content: space-between;
+  text-align: center;
+}
+
+
+.flex-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container-box {
+  height: 600px;
+}
+
+.btn-page {
+  display: flex;
+  justify-content: space-between;
 }

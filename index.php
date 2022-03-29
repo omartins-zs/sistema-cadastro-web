@@ -49,7 +49,8 @@
                 <a href="#">Esqueceu sua senha?</a>
             </section>
 
-            <button type="submit" value="Entrar" id="btn-login">Login</button>
+            <!-- excluido id="btn-login" de button -->
+            <button type="submit" value="Entrar">Login</button>
 
     <section class="links-container">
                 <span>Ou entre com:</span>
