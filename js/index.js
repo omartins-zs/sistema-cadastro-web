@@ -14,7 +14,9 @@ function showPassword() {
     }
 }
 
-document.getElementById('btn-login').addEventListener('click', function (e) {
-    e.preventDefault();
-    alert('Logado!');
-});
+// Comentado nesse projetado nao precisa mostrar logado
+
+// document.getElementById('btn-login').addEventListener('click', function (e) {
+//     e.preventDefault();
+//     alert('Logado!');
+// });
