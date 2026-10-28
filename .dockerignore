@@ -1,0 +1,6 @@
+.git
+.env
+.env.example
+vendor
+Script-BD-Escola.txt
+*.log
