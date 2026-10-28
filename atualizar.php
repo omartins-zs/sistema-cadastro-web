@@ -1,24 +1,44 @@
 <?php
 
-require_once('conexao.php');
+require_once __DIR__ . '/auth.php';
+require_admin();
+require_once __DIR__ . '/conexao.php';
 
-$id = $_POST['codigo'];
-
-$usuario = $_POST['txt_usuario'];
-$senha = $_POST['txt_senha'];
-$email = $_POST['txt_email'];
-$nivel = $_POST['nivel'];
-
-$sql_atualizar = mysqli_query($conn, " UPDATE usuarios SET usuario='$usuario', senha='$senha', email='$email', nivel='$nivel' WHERE id='$id'");
-
-if ($sql_atualizar == true) {
-    echo "<script>
-        alert('Dados do usuario atualizados com Sucesso!!');
-        window.location.href='listarUsuarios.php';
-    </script>";
-} else {
-    echo "<script>
-        alert('Falha na edição do usuario');
-        window.location.href='editar.php';
-    </script>";
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_is_valid($_POST['csrf_token'] ?? null)) {
+    http_response_code(400);
+    exit('Solicitação inválida.');
 }
+
+$id = filter_input(INPUT_POST, 'codigo', FILTER_VALIDATE_INT);
+$usuario = trim($_POST['txt_usuario'] ?? '');
+$senha = $_POST['txt_senha'] ?? '';
+$email = trim($_POST['txt_email'] ?? '');
+$nivel = $_POST['nivel'] ?? '';
+
+if (!$id || $usuario === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)
+    || !in_array($nivel, ['Admin', 'Prof', 'Aluno'], true)
+    || ($senha !== '' && strlen($senha) < 8)) {
+    header('Location: editar.php?codigo=' . (int) $id . '&erro=validacao');
+    exit;
+}
+
+try {
+    if ($senha !== '') {
+        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare('UPDATE usuarios SET usuario = ?, senha = ?, email = ?, nivel = ? WHERE id = ?');
+        $stmt->bind_param('ssssi', $usuario, $senhaHash, $email, $nivel, $id);
+    } else {
+        $stmt = $conn->prepare('UPDATE usuarios SET usuario = ?, email = ?, nivel = ? WHERE id = ?');
+        $stmt->bind_param('sssi', $usuario, $email, $nivel, $id);
+    }
+
+    $stmt->execute();
+    $stmt->close();
+} catch (mysqli_sql_exception $exception) {
+    error_log('User update failed: ' . $exception->getMessage());
+    header('Location: editar.php?codigo=' . $id . '&erro=atualizacao');
+    exit;
+}
+
+header('Location: listarUsuarios.php?atualizado=1');
+exit;

@@ -3,20 +3,8 @@ function showPassword() {
     const eyeSlash = document.getElementById("eye-slash");
     const fieldPassword = document.getElementById("field-password");
 
-    if (eye.style.display === 'none') {
-        eye.style.display = 'block';
-        eyeSlash.style.display = 'none'
-        fieldPassword.type = 'text'
-    } else {
-        eye.style.display = 'none';
-        eyeSlash.style.display = 'block'
-        fieldPassword.type = 'password'
-    }
+    const mostrarSenha = fieldPassword.type === 'password';
+    fieldPassword.type = mostrarSenha ? 'text' : 'password';
+    eye.style.display = mostrarSenha ? 'block' : 'none';
+    eyeSlash.style.display = mostrarSenha ? 'none' : 'block';
 }
-
-// Comentado nesse projetado nao precisa mostrar logado
-
-// document.getElementById('btn-login').addEventListener('click', function (e) {
-//     e.preventDefault();
-//     alert('Logado!');
-// });

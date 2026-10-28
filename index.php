@@ -1,4 +1,16 @@
+<?php
+require_once __DIR__ . '/auth.php';
+start_app_session();
 
+$mensagemLogin = null;
+if (($_GET['erro'] ?? '') === 'credenciais') {
+    $mensagemLogin = 'Usuário ou senha inválidos.';
+} elseif (($_GET['erro'] ?? '') === 'login') {
+    $mensagemLogin = 'Faça login para continuar.';
+} elseif (($_GET['cadastro'] ?? '') === 'sucesso') {
+    $mensagemLogin = 'Cadastro concluído. Entre com seu usuário e senha.';
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -27,44 +39,26 @@
     </header>
 
     <main>
-    <form action="login.php" method="post">
+        <form action="login.php" method="post">
+            <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
+            <?php if ($mensagemLogin !== null): ?>
+                <p class="form-message" role="status"><?= escape_html($mensagemLogin) ?></p>
+            <?php endif; ?>
             <section class="inputs-container">
-                <label for="txt_usuario">Usuario</label>
-                <input type="text" placeholder="jorginho" name="txt_usuario"> <br>
+                <label for="txt_usuario">Usuário</label>
+                <input type="text" id="txt_usuario" placeholder="Seu usuário" name="txt_usuario" autocomplete="username" required> <br>
 
                 <div class="password-container">
 
-                    <input type="password" id="field-password" name="txt_senha" class="field-password" placeholder="*******">
+                    <input type="password" id="field-password" name="txt_senha" class="field-password" placeholder="Sua senha" autocomplete="current-password" required>
                     <i class="fas fa-eye" id="eye" onclick="showPassword()"></i>
                     <i class="fas fa-eye-slash" id="eye-slash" onclick="showPassword()"></i>
                 </div>
             </section>
 
-            <section class="password-infos">
-                <div>
-                    <input type="checkbox">
-                    <span>Lembrar senha?</span>
-                </div>
-
-                <a href="#">Esqueceu sua senha?</a>
-            </section>
-
-            <!-- excluido id="btn-login" de button -->
             <button type="submit" value="Entrar">Login</button>
-
-    <section class="links-container">
-                <span>Ou entre com:</span>
-
-                <aside>
-                    <a href="#"><i class="fab fa-google-plus-square google"></i></a>
-                    <a href="#"><i class="fab fa-linkedin linkedin"></i></a>
-                    <a href="#"><i class="fab fa-facebook-square facebook"></i></a>
-                </aside>
-            </section>
-    <footer>
+            <footer>
                 <hr>
-                <br>
-                <br>
                 <span>Ainda não tem uma conta? <a href="./cadastroUsuario.php">Cadastrar-se</a></span>
             </footer>
     </form>

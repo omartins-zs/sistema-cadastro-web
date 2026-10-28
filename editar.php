@@ -1,69 +1,64 @@
 <?php
+require_once __DIR__ . '/auth.php';
+require_admin();
+require_once __DIR__ . '/conexao.php';
 
-require_once('conexao.php');
+$id = filter_input(INPUT_GET, 'codigo', FILTER_VALIDATE_INT);
+if (!$id) {
+    http_response_code(400);
+    exit('Identificador de usuário inválido.');
+}
 
-$id = $_GET['codigo'];
+$stmt = $conn->prepare('SELECT id, usuario, email, nivel FROM usuarios WHERE id = ?');
+$stmt->bind_param('i', $id);
+$stmt->execute();
+$stmt->bind_result($usuarioId, $usuario, $email, $nivel);
+$encontrado = $stmt->fetch();
+$stmt->close();
 
-$sql_consulta = mysqli_query($conn, "SELECT *FROM usuarios where id='$id' ");
-
-$dados = mysqli_fetch_array($sql_consulta);
-
+if (!$encontrado) {
+    http_response_code(404);
+    exit('Usuário não encontrado.');
+}
 ?>
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="./css/style.css">
-
-    <title>Edição</title>
+    <title>Editar usuário</title>
 </head>
 
 <body>
-    <center>
-
-
-        <h1>TECNOLOGIA DA INFORMAÇÃO</h1>
-        <hr>
-        <h2>Edição dos dados</h2>
-
-        <hr>
+    <main>
         <form class="login" action="atualizar.php" method="post">
+            <h1>Editar usuário</h1>
+            <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
+            <input type="hidden" name="codigo" value="<?= (int) $usuarioId ?>">
 
-            <input type="hidden" name="codigo" value="<?= $dados[0] ?>">
+            <label for="txt_usuario">Usuário</label>
+            <input id="txt_usuario" type="text" name="txt_usuario" maxlength="120" value="<?= escape_html($usuario) ?>" required>
 
-            <label for="nome">Nome:</label>
-            <br>
-            <input type="text" name="txt_usuario" value="<?= $dados[1] ?>">
-            <br>
-            <label for="senha">Senha:</label>
-            <br>
-            <input type="password" name="txt_senha" value="<?= $dados[2] ?>">
-            <br>
-            <label for="mail">E-mail:</label>
-            <br>
-            <input type="email" name="txt_email" value="<?= $dados[3] ?>">
-            <br>
-            <br>
-            <label for="text">Nivel:</label>
-            <select name="nivel" id="">
-                <option <?= $dados[4] ?>><?= $dados[4] ?></option>
-                <option value="Prof">Professor</option>
-                <option value="Aluno">Aluno</option>
+            <label for="txt_senha">Nova senha (opcional)</label>
+            <input id="txt_senha" type="password" name="txt_senha" minlength="8" autocomplete="new-password">
+            <small>Deixe em branco para manter a senha atual.</small>
+
+            <label for="txt_email">E-mail</label>
+            <input id="txt_email" type="email" name="txt_email" maxlength="255" value="<?= escape_html($email) ?>" required>
+
+            <label for="nivel">Perfil</label>
+            <select id="nivel" name="nivel" required>
+                <?php foreach (['Admin', 'Prof', 'Aluno'] as $perfil): ?>
+                    <option value="<?= escape_html($perfil) ?>" <?= $nivel === $perfil ? 'selected' : '' ?>><?= escape_html($perfil) ?></option>
+                <?php endforeach; ?>
             </select>
-            <br> <br>
 
-            <input type="submit" value="Atualizar">
-            <br>
-
+            <button type="submit">Salvar alterações</button>
+            <p><a href="listarUsuarios.php">Voltar à lista</a></p>
         </form>
-    </center>
-
+    </main>
 </body>
 
 </html>

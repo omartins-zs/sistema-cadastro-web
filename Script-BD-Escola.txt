@@ -1,5 +1,15 @@
-CREATE DATABASE escola;
+CREATE DATABASE IF NOT EXISTS escola CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE escola;
 
-CREATE TABLE `escola`.`usuarios` ( `id` INT NOT NULL AUTO_INCREMENT , `usuario` VARCHAR(120) NOT NULL , `senha` VARCHAR(50) NOT NULL , `email` VARCHAR(50) NOT NULL , `nivel` VARCHAR(120) NOT NULL , PRIMARY KEY (`id`), UNIQUE (`email`)) ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `usuarios` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `usuario` VARCHAR(120) NOT NULL,
+    `senha` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `nivel` VARCHAR(120) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `usuarios` (`id`, `usuario`, `senha`, `email`, `nivel`) VALUES (NULL, 'Alberto', '123', 'alberto@email.com', 'Admin')
+INSERT IGNORE INTO `usuarios` (`usuario`, `senha`, `email`, `nivel`)
+VALUES ('Alberto', '123', 'alberto@email.com', 'Admin');

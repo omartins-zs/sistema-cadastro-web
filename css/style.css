@@ -131,6 +131,34 @@ main form button:hover {
   color: #18acfe;
 }
 
+.form-message {
+  width: 90%;
+  padding: 10px 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #8b1e1e;
+  text-align: center;
+}
+
+main form label,
+main form small,
+main form p {
+  color: #fff;
+}
+
+main form .form-message {
+  color: #8b1e1e;
+}
+
+main form select {
+  width: 90%;
+  min-height: 42px;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+}
+
 main form .links-container {
   width: 100%;
   display: flex;

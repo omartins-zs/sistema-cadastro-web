@@ -1,5 +1,9 @@
+<?php
+require_once __DIR__ . '/auth.php';
+require_login();
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -17,16 +21,20 @@
 <body>
     <center>
 
-        <h1>Bem vindo ao Sistema</h1>
+        <h1>Bem-vindo, <?= escape_html($_SESSION['usuario'] ?? '') ?></h1>
 
     </center>
     <div class="flex-box container-box">
   <div class="content-box">
   <div class="btn-list">
 
-        <a class="btn btn-info" href="listarUsuarios.php">Usuarios</a>
-        <a class="btn btn-dark" href="listarCursos.php">Cursos</a>
-        <a class="btn btn-success" href="listarAlunos.php">Alunos</a>
+        <?php if (($_SESSION['nivel'] ?? '') === 'Admin'): ?>
+        <a class="btn btn-info" href="listarUsuarios.php">Gerenciar usuários</a>
+        <?php endif; ?>
+        <form action="logout.php" method="post">
+            <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
+            <button class="btn btn-secondary" type="submit">Sair</button>
+        </form>
 
     </div>
   </div>

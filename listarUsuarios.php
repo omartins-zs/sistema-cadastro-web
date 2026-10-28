@@ -1,98 +1,59 @@
 <?php
+require_once __DIR__ . '/auth.php';
+require_admin();
+require_once __DIR__ . '/conexao.php';
 
-include_once('conexao.php');
-
+$usuarios = $conn->query('SELECT id, usuario, email, nivel FROM usuarios ORDER BY usuario');
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="./css/style.css">
-
-    <!-- Bootstrap 4 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <!-- Fontawesome 5 -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
-        integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
-
-    <title>Lista de usuarios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <title>Usuários</title>
 </head>
 
 <body>
-    <br>
-    <div class="container">
-
-        <h2 class="text-center">
-            Usuarios cadastrados no Sistema <i class="fa fa-users"></i>
-        </h2>
-
-        <hr>
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered border-primary">
-                <thead class="table-light">
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Senha</th>
-                        <th>Email</th>
-                        <th>Nivel</th>
-                        <th colspan="2">Açoes</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <?php
-
-                    $sql_consulta = mysqli_query($conn, " SELECT * FROM usuarios ");
-
-                    $total_registros = mysqli_num_rows($sql_consulta);
-
-                    while ($dados = mysqli_fetch_array($sql_consulta)) {
-                    ?>
-
-                    <tr>
-                        <td> <?= $dados[1] ?> </td>
-                        <td> <?= $dados[2] ?> </td>
-                        <td> <?= $dados[3] ?> </td>
-                        <td> <?= $dados[4] ?> </td>
-                        <td>
-                            <a class="btn btn-danger btn-xs" href="excluir.php?codigo=<?= $dados[0] ?>"><i
-                                    class="fa fa-trash"></i> Excluir</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-warning btn-xs" href="editar.php?codigo=<?= $dados[0] ?>"><i
-                                    class="fa fa-user-edit"></i> Editar</a>
-                        </td>
-                    </tr>
-
-                    <?php } ?>
-                    <tr>
-                        <td colspan="6">Total: <?= $total_registros ?> </td>
-                    </tr>
-                </tbody>
-            </table>
+    <main>
+        <div class="container py-4">
+            <h1 class="text-center">Usuários cadastrados</h1>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered bg-white">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Usuário</th>
+                            <th>E-mail</th>
+                            <th>Perfil</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php while ($usuario = $usuarios->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= escape_html($usuario['usuario']) ?></td>
+                            <td><?= escape_html($usuario['email']) ?></td>
+                            <td><?= escape_html($usuario['nivel']) ?></td>
+                            <td class="d-flex gap-2">
+                                <a class="btn btn-warning btn-sm" href="editar.php?codigo=<?= (int) $usuario['id'] ?>">Editar</a>
+                                <form action="excluir.php" method="post" onsubmit="return confirm('Excluir este usuário?')">
+                                    <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
+                                    <input type="hidden" name="codigo" value="<?= (int) $usuario['id'] ?>">
+                                    <button class="btn btn-danger btn-sm" type="submit">Excluir</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+            <p><?= $usuarios->num_rows ?> usuário(s)</p>
+            <a class="btn btn-secondary" href="home.php">Voltar</a>
+            <a class="btn btn-info" href="relatorioUsuario.php">Baixar relatório PDF</a>
         </div>
-        <hr>
-
-        <div class="btn-page">
-
-            <a class="btn btn-secondary" href="index.php">
-                <i class="far fa-arrow-alt-circle-left"></i>
-                </i> Voltar
-            </a>
-
-            <a class="btn btn-info" href="relatorioUsuario.php">
-                <i class="fas fa-print"></i> Imprimir
-            </a>
-        </div>
-
-    </div>
-
+    </main>
 </body>
 
 </html>
