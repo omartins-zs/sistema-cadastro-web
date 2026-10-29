@@ -182,7 +182,7 @@ $stmt->close();
                                             <a class="btn btn-secondary btn-sm" href="secretaria.php?ver=<?= (int) $row['id'] ?>">
                                                 <i class="fa-solid fa-eye"></i> Visualizar
                                             </a>
-                                            <a class="btn btn-primary btn-sm" style="width:auto;margin-top:0;" href="baixar.php?doc=<?= (int) $row['id'] ?>">
+                                            <a class="btn btn-primary btn-sm" href="baixar.php?doc=<?= (int) $row['id'] ?>">
                                                 <i class="fa-solid fa-file-arrow-down"></i> Baixar PDF
                                             </a>
                                         </div>

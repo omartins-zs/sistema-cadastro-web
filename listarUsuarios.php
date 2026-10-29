@@ -69,7 +69,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                     <a href="relatorioUsuario.php" target="_blank" class="btn btn-secondary btn-sm" title="Exportar PDF">
                         <i class="fa-solid fa-file-pdf"></i> Baixar PDF
                     </a>
-                    <a href="cadastroUsuario.php" class="btn btn-primary btn-sm" style="margin-top:0;">
+                    <a href="cadastroUsuario.php" class="btn btn-primary btn-sm">
                         <i class="fa-solid fa-user-plus"></i> Novo Usuário
                     </a>
                 </div>

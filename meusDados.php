@@ -175,7 +175,7 @@ $primeiraLetra = strtoupper(mb_substr($usuarioNome, 0, 1, 'UTF-8'));
                         <a href="home.php" class="btn btn-secondary">
                             <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
                         </a>
-                        <button type="submit" class="btn btn-primary" style="margin-top: 0;">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
                         </button>
                     </div>

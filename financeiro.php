@@ -339,9 +339,9 @@ $msgPago = isset($_GET['pago']) ? 'Pagamento processado e baixado com sucesso vi
                 <input type="hidden" name="acao" value="pagar_mensalidade">
                 <input type="hidden" name="mensalidade_id" id="pix-id" value="">
                 
-                <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+                <div style="display:flex;gap:0.75rem;justify-content:flex-end;align-items:center;">
                     <button type="button" class="btn btn-secondary" onclick="fecharPix()">Fechar</button>
-                    <button type="submit" class="btn btn-primary" style="margin-top:0;width:auto;">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa-solid fa-bolt"></i> Simular Pagamento Instantâneo
                     </button>
                 </div>
@@ -379,9 +379,9 @@ $msgPago = isset($_GET['pago']) ? 'Pagamento processado e baixado com sucesso vi
                 </div>
             </div>
 
-            <div style="display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1rem;" class="no-print">
+            <div style="display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1rem;align-items:center;" class="no-print">
                 <button type="button" class="btn btn-secondary" onclick="fecharRecibo()">Fechar</button>
-                <button type="button" class="btn btn-primary" style="margin-top:0;width:auto;" onclick="window.print()">
+                <button type="button" class="btn btn-primary" onclick="window.print()">
                     <i class="fa-solid fa-print"></i> Imprimir Recibo
                 </button>
             </div>

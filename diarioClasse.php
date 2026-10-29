@@ -253,8 +253,8 @@ $msgErro = $_GET['erro'] ?? null;
                         </button>
                     </div>
                     <div style="display:flex;gap:0.75rem;align-items:center;">
-                        <a href="turmas.php" class="btn btn-secondary" style="flex:none;"><i class="fa-solid fa-users-rectangle"></i> Ver Turmas</a>
-                        <button type="submit" class="btn btn-primary" style="flex:none;width:auto;margin-top:0;">
+                        <a href="turmas.php" class="btn btn-secondary"><i class="fa-solid fa-users-rectangle"></i> Ver Turmas</a>
+                        <button type="submit" class="btn btn-primary">
                             <i class="fa-solid fa-floppy-disk"></i> Salvar Lançamentos
                         </button>
                     </div>

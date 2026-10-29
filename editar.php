@@ -132,7 +132,7 @@ $erro = $_GET['erro'] ?? '';
                     <a href="listarUsuarios.php" class="btn btn-secondary">
                         <i class="fa-solid fa-xmark"></i> Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary" style="margin-top: 0;">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
                     </button>
                 </div>

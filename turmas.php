@@ -104,7 +104,7 @@ $mediaGlobalGeral = !empty($mediasPorDisciplina)
                 <a href="comunicados.php" class="btn btn-secondary btn-sm">
                     <i class="fa-solid fa-bullhorn"></i> Comunicados
                 </a>
-                <a href="diarioClasse.php" class="btn btn-primary btn-sm" style="margin-top:0;">
+                <a href="diarioClasse.php" class="btn btn-primary btn-sm">
                     <i class="fa-solid fa-chalkboard"></i> Abrir Diário de Classe
                 </a>
             </div>
@@ -181,11 +181,11 @@ $mediaGlobalGeral = !empty($mediasPorDisciplina)
                         </div>
                     </div>
 
-                    <div style="display:flex;gap:0.5rem;margin-top:1rem;border-top:1px solid rgba(255,255,255,0.06);padding-top:1rem;">
+                    <div style="display:flex;gap:0.5rem;align-items:center;margin-top:1rem;border-top:1px solid rgba(255,255,255,0.06);padding-top:1rem;">
                         <button type="button" class="btn btn-secondary btn-sm" style="flex:1;" onclick="verAlunosModal('<?= escape_html(addslashes($t['nome'])) ?>', '<?= escape_html(addslashes($t['disciplina'])) ?>')">
                             <i class="fa-solid fa-users"></i> Alunos
                         </button>
-                        <a href="diarioClasse.php?disciplina=<?= urlencode($t['disciplina']) ?>" class="btn btn-primary btn-sm" style="flex:1.2;margin-top:0;">
+                        <a href="diarioClasse.php?disciplina=<?= urlencode($t['disciplina']) ?>" class="btn btn-primary btn-sm" style="flex:1;">
                             <i class="fa-solid fa-pen-to-square"></i> Lançar Notas
                         </a>
                     </div>
