@@ -425,9 +425,10 @@ textarea:-webkit-autofill,
   transform: translateY(0) !important;
 }
 
-/* No formulário inicial de login/cadastro, o botão ocupa 100% da largura */
-.auth-card .btn-primary,
-.auth-form > .btn-primary {
+/* No formulário inicial de login/cadastro com botão solitário (ex: login) */
+.auth-card > form > .btn-primary,
+.auth-card > .auth-form > .btn-primary,
+.auth-form > .btn-primary:last-child {
   width: 100% !important;
   height: 48px !important;
   min-height: 48px !important;
@@ -471,7 +472,9 @@ textarea:-webkit-autofill,
   transform: translateY(-1px) !important;
 }
 
-.btn-sm {
+.btn-sm,
+a.btn-sm,
+button.btn-sm {
   height: 36px !important;
   min-height: 36px !important;
   max-height: 36px !important;
@@ -484,6 +487,22 @@ textarea:-webkit-autofill,
   gap: 0.4rem !important;
   width: auto !important;
   margin: 0 !important;
+  box-sizing: border-box !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  border: 1px solid transparent !important;
+}
+
+.btn-secondary.btn-sm,
+a.btn-secondary.btn-sm,
+button.btn-secondary.btn-sm {
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+}
+
+.btn-primary.btn-sm,
+a.btn-primary.btn-sm,
+button.btn-primary.btn-sm {
+  border: 1px solid rgba(56, 189, 248, 0.4) !important;
 }
 
 /* Card Footer */
@@ -1002,15 +1021,35 @@ textarea:-webkit-autofill,
   align-items: center !important;
   gap: 0.75rem !important;
   margin-top: 1.5rem !important;
+  width: 100% !important;
 }
 
-.form-actions-row .btn {
-  flex: 1;
+.form-actions-row .btn,
+.form-actions-row a.btn,
+.form-actions-row button.btn,
+.form-actions-row .btn-primary,
+.form-actions-row .btn-secondary,
+.auth-card .form-actions-row .btn,
+.auth-card .form-actions-row .btn-primary,
+.auth-card .form-actions-row .btn-secondary,
+.auth-form .form-actions-row .btn,
+.auth-form .form-actions-row .btn-primary,
+.auth-form .form-actions-row .btn-secondary {
+  flex: 1 1 0 !important;
+  width: auto !important;
   height: 44px !important;
   min-height: 44px !important;
   max-height: 44px !important;
   margin: 0 !important;
+  padding: 0 1.25rem !important;
+  line-height: 1 !important;
   box-sizing: border-box !important;
+  vertical-align: middle !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
 }
 
 /* Responsive Rules */

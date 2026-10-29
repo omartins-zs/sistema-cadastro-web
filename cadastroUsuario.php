@@ -107,7 +107,7 @@ $cacheVersion = time();
                         <a href="home.php" class="btn btn-secondary">
                             <i class="fa-solid fa-arrow-left"></i> Voltar ao Início
                         </a>
-                        <button type="submit" class="btn btn-primary" style="margin-top: 0;">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fa-solid fa-user-plus"></i> Salvar Usuário
                         </button>
                     </div>
