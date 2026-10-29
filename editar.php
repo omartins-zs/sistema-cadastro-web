@@ -3,6 +3,11 @@ require_once __DIR__ . '/auth.php';
 require_admin();
 require_once __DIR__ . '/conexao.php';
 
+$adminNome = $_SESSION['usuario'] ?? 'Admin';
+$adminNivel = $_SESSION['nivel'] ?? 'Admin';
+$primeiraLetra = strtoupper(mb_substr($adminNome, 0, 1, 'UTF-8'));
+$cacheVersion = time();
+
 $id = filter_input(INPUT_GET, 'codigo', FILTER_VALIDATE_INT);
 if (!$id) {
     http_response_code(400);
@@ -20,6 +25,8 @@ if (!$encontrado) {
     http_response_code(404);
     exit('Usuário não encontrado.');
 }
+
+$erro = $_GET['erro'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -27,38 +34,137 @@ if (!$encontrado) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/style.css">
-    <title>Editar usuário</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/app.css?v=<?= $cacheVersion ?>">
+    <title>Editar Usuário - Cadastro Web</title>
 </head>
 
 <body>
-    <main>
-        <form class="login" action="atualizar.php" method="post">
-            <h1>Editar usuário</h1>
-            <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
-            <input type="hidden" name="codigo" value="<?= (int) $usuarioId ?>">
+    <!-- Top Navigation Bar -->
+    <nav class="app-navbar">
+        <a href="home.php" class="nav-brand">
+            <div class="nav-brand-icon">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <span>Cadastro Web</span>
+        </a>
 
-            <label for="txt_usuario">Usuário</label>
-            <input id="txt_usuario" type="text" name="txt_usuario" maxlength="120" value="<?= escape_html($usuario) ?>" required>
+        <div class="nav-user-area">
+            <div class="user-badge-pill">
+                <span class="user-avatar-sm"><?= escape_html($primeiraLetra) ?></span>
+                <strong><?= escape_html($adminNome) ?></strong>
+                <span class="role-pill role-<?= strtolower($adminNivel) ?>">
+                    <?= escape_html($adminNivel) ?>
+                </span>
+            </div>
 
-            <label for="txt_senha">Nova senha (opcional)</label>
-            <input id="txt_senha" type="password" name="txt_senha" minlength="8" autocomplete="new-password">
-            <small>Deixe em branco para manter a senha atual.</small>
+            <form action="logout.php" method="post" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
+                <button type="submit" class="btn btn-secondary btn-sm" title="Encerrar sessão">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </form>
+        </div>
+    </nav>
 
-            <label for="txt_email">E-mail</label>
-            <input id="txt_email" type="email" name="txt_email" maxlength="255" value="<?= escape_html($email) ?>" required>
+    <div class="edit-page-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-bar">
+            <a href="home.php"><i class="fa-solid fa-house"></i> Início</a>
+            <span class="breadcrumb-separator"><i class="fa-solid fa-chevron-right"></i></span>
+            <a href="listarUsuarios.php">Gerenciar Usuários</a>
+            <span class="breadcrumb-separator"><i class="fa-solid fa-chevron-right"></i></span>
+            <span>Editar Usuário #<?= (int) $usuarioId ?></span>
+        </div>
 
-            <label for="nivel">Perfil</label>
-            <select id="nivel" name="nivel" required>
-                <?php foreach (['Admin', 'Prof', 'Aluno'] as $perfil): ?>
-                    <option value="<?= escape_html($perfil) ?>" <?= $nivel === $perfil ? 'selected' : '' ?>><?= escape_html($perfil) ?></option>
-                <?php endforeach; ?>
-            </select>
+        <div class="edit-card">
+            <div class="auth-header" style="margin-bottom: 2rem;">
+                <div class="auth-badge">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+                <h1>Editar Usuário</h1>
+                <p>Atualize as informações cadastrais e o nível de acesso</p>
+            </div>
 
-            <button type="submit">Salvar alterações</button>
-            <p><a href="listarUsuarios.php">Voltar à lista</a></p>
-        </form>
-    </main>
+            <?php if ($erro === 'validacao'): ?>
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Dados inválidos. Verifique o formato do e-mail, perfil ou se a nova senha possui pelo menos 8 caracteres.</span>
+                </div>
+            <?php elseif ($erro === 'atualizacao'): ?>
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Falha ao atualizar o usuário. O e-mail informado já pode estar em uso por outra conta.</span>
+                </div>
+            <?php endif; ?>
+
+            <form class="auth-form" action="atualizar.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
+                <input type="hidden" name="codigo" value="<?= (int) $usuarioId ?>">
+
+                <div class="form-group">
+                    <label class="form-label" for="txt_usuario">Nome de Usuário</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon-left"></i>
+                        <input id="txt_usuario" class="form-control" type="text" name="txt_usuario" maxlength="120" value="<?= escape_html($usuario) ?>" autocomplete="username" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="txt_email">Endereço de E-mail</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope input-icon-left"></i>
+                        <input id="txt_email" class="form-control" type="email" name="txt_email" maxlength="255" value="<?= escape_html($email) ?>" autocomplete="email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="txt_senha">Nova Senha (opcional)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock input-icon-left"></i>
+                        <input id="txt_senha" class="form-control" type="password" name="txt_senha" minlength="8" placeholder="Digite apenas para alterar a senha atual" autocomplete="new-password">
+                        <span role="button" class="btn-toggle-password" onclick="togglePasswordVisibility('txt_senha', this)" title="Mostrar ou ocultar senha" aria-label="Mostrar ou ocultar senha">
+                            <i class="fa-solid fa-eye"></i>
+                        </span>
+                    </div>
+                    <span class="field-hint">
+                        <i class="fa-solid fa-circle-info"></i> Deixe o campo em branco para manter a senha atual.
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="nivel">Perfil de Acesso</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-id-badge input-icon-left"></i>
+                        <select id="nivel" name="nivel" class="form-control" required>
+                            <?php foreach (['Admin', 'Prof', 'Aluno'] as $perfil): ?>
+                                <option value="<?= escape_html($perfil) ?>" <?= $nivel === $perfil ? 'selected' : '' ?>><?= escape_html($perfil) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions-row">
+                    <a href="listarUsuarios.php" class="btn btn-secondary">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 0;">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/index.js?v=<?= $cacheVersion ?>"></script>
 </body>
 
 </html>
