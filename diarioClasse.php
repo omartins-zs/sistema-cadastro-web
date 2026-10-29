@@ -157,7 +157,7 @@ $msgErro = $_GET['erro'] ?? null;
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon dash-icon-blue" style="background:rgba(239, 68, 68, 0.15);color:#fca5a5;">
+                <div class="stat-icon dash-icon-red">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
                 <div class="stat-info">

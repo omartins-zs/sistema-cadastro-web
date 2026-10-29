@@ -689,42 +689,82 @@ button.btn-primary.btn-sm {
 
 /* Stats Cards */
 .stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.25rem;
-  margin-bottom: 2rem;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  gap: 1.25rem !important;
+  margin-bottom: 2rem !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-.stat-box {
-  background: var(--surface-card);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-md);
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.stat-box,
+.stat-card {
+  background: var(--surface-card) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--border-card) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 1.25rem 1.5rem !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 1.15rem !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.stat-box:hover,
+.stat-card:hover {
+  transform: translateY(-2.5px) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.08) !important;
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.35rem !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.2s ease !important;
+}
+
+.stat-box:hover .stat-icon,
+.stat-card:hover .stat-icon {
+  transform: scale(1.06) !important;
+}
+
+.stat-info {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  min-width: 0 !important;
 }
 
 .stat-info h4 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.2;
+  font-size: 1.65rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  line-height: 1.1 !important;
+  margin: 0 0 0.25rem 0 !important;
+  letter-spacing: -0.02em !important;
+  font-feature-settings: "tnum" !important;
 }
 
 .stat-info span {
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  color: var(--text-muted) !important;
+  letter-spacing: 0.02em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 /* Dashboard Cards Grid */
@@ -781,6 +821,19 @@ button.btn-primary.btn-sm {
   background: rgba(168, 85, 247, 0.15);
   color: #c084fc;
   border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.dash-icon-red,
+.dash-icon-rose {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
+.dash-icon-amber {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
 }
 
 .dash-card h3 {
