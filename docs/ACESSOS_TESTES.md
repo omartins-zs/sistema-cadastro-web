@@ -2,13 +2,15 @@
 
 As informações abaixo vieram do script `Script-BD-Escola.txt`. Não há seeders no projeto. Use essas credenciais apenas em ambiente local ou Docker de desenvolvimento.
 
-## 1. Usuário de demonstração
+## 1. Usuários de demonstração (Multi-perfil)
 
-| Perfil | E-mail / Usuário | Senha | Permissão / Detalhes |
-| --- | --- | --- | --- |
-| Administrador | `Alberto` | `123` | Acessa a lista, edição, exclusão e relatório PDF de usuários. |
+| Perfil | Usuário | Senha | E-mail | Permissões & Detalhes |
+| --- | --- | --- | --- | --- |
+| **Administrador** | `Alberto` | `123` | `alberto@email.com` | Acesso irrestrito ao painel, listagem, edição, exclusão, relatório PDF e cadastro de novos usuários com atribuição de perfil. |
+| **Professor** | `ProfessorCarlos` | `12345678` | `professor@escola.com` | Dashboard docente exclusivo com módulos de diário de classe, notas e turmas. Bloqueado de alterações administrativas (403). |
+| **Aluno** | `AlunoLucas` | `12345678` | `aluno@escola.com` | Dashboard acadêmico exclusivo com boletim, secretaria online e dados do aluno. Bloqueado de alterações administrativas (403). |
 
-O formulário público de cadastro cria usuários com perfil `Aluno`. O painel de gerenciamento é restrito ao perfil `Admin`.
+O formulário público de auto-cadastro cria usuários com perfil `Aluno`. O administrador logado pode cadastrar usuários escolhendo o nível (`Admin`, `Prof`, `Aluno`) e permanece logado após a criação.
 
 ## 2. URLs principais
 
@@ -29,7 +31,13 @@ Login é um formulário dentro de `index.php`; `login.php` recebe o POST. `home.
 | Gerenciamento de usuários (Admin) | `http://localhost:8080/listarUsuarios.php` |
 | PHPMyAdmin | `http://localhost:8085/` |
 
-## 4. Validação
+## 4. Validação e Testes Automatizados
+
+Para executar a suíte automatizada de testes que cobre todos os 10 fluxos de ponta a ponta:
+
+```bash
+docker exec cadastro-web-app-1 php /var/www/html/tests/test_system.php
+```
 
 | Verificação | Resultado esperado |
 | --- | --- |
@@ -37,8 +45,9 @@ Login é um formulário dentro de `index.php`; `login.php` recebe o POST. `home.
 | Tela principal | HTTP `200` |
 | Credenciais válidas | Redirecionamento HTTP `302` para `home.php` |
 | Credenciais inválidas | Retorno à tela de login com mensagem genérica |
+| Rate Limiting (5 falhas) | Retorno à tela de login com bloqueio temporário |
 | Acesso anônimo a `home.php` | Redirecionamento para o login |
-| Usuário sem perfil Admin abre painel | HTTP `403` |
+| Usuário sem perfil Admin abre painel | HTTP `403` com página de erro amigável |
 
 ## 5. Recriar os dados locais
 

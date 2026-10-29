@@ -2,11 +2,12 @@
 
 # 💻 Sistema de Cadastro Web
 
-Aplicação web monolítica para cadastro e gerenciamento de usuários, com login, perfis e exportação de relatório PDF.
+Aplicação web robusta e moderna para cadastro e gerenciamento de usuários, com autenticação, perfis de acesso, pesquisa dinâmica e exportação de relatório PDF.
 
 ![PHP 8.2](https://img.shields.io/badge/PHP-8.2-777BB4?logo=php&logoColor=white)
 ![MySQL 8](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)
 ![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Concluído-success)
 
 <p>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" width="36" alt="PHP" />
@@ -14,95 +15,109 @@ Aplicação web monolítica para cadastro e gerenciamento de usuários, com logi
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="36" alt="Docker" />
 </p>
 
+<h4 align="center">✅ Projeto Concluído & Homologado 🚀</h4>
+
 </div>
 
 ## 🧭 Sobre o projeto
 
-Sistema acadêmico de cadastro desenvolvido em PHP procedural. A interface e o processamento ficam no mesmo projeto e se conectam a um banco MySQL.
+Sistema acadêmico e corporativo desenvolvido em PHP procedural com arquitetura segura e interface de alta fidelidade baseada em **SaaS Dark Mode com Glassmorphism**.
 
-<cite>Cadastro e gerenciamento de usuários com controle de acesso e relatório PDF.</cite>
+A aplicação reúne formulários com validações avançadas, proteção de credenciais, controle de acesso baseado em níveis (Admin, Prof, Aluno) e relatórios formatados em PDF.
 
-<h4 align="center">⚙️ Em desenvolvimento 🚀</h4>
+## 🏗️ Arquitetura e Tecnologias
 
-## 🏗️ Arquitetura
+- **Backend:** PHP 8.1+ (executado em PHP 8.2 com Apache no Docker).
+- **Banco de Dados:** MySQL 8.0 com charset UTF-8 mb4.
+- **Frontend & Design:** Design System customizado (Glassmorphism, Google Fonts, Font Awesome 6.5, CSS Variables).
+- **Segurança:** Tokens anti-CSRF, hash seguro com `password_hash`, proteção contra brute-force (Rate Limiting) e prevenção de XSS/SQL Injection.
+- **Dependências:** Dompdf para geração de PDF e PHP Dotenv para variáveis de ambiente.
 
-- **Tipo:** monólito web.
-- **Backend:** PHP 8.1+; a imagem Docker utiliza PHP 8.2 com Apache.
-- **Banco:** MySQL 8.0.
-- **Dependências:** Dompdf para PDF e PHP dotenv para configuração local.
+## ✨ Funcionalidades Principais
 
-## ✨ Funcionalidades
-
-- Login e encerramento de sessão.
-- Cadastro público de usuário com perfil padrão `Aluno`.
-- Gerenciamento de usuários para o perfil `Admin`.
-- Alteração e exclusão de usuários.
-- Exportação da lista de usuários em PDF.
-- Verificação de CSRF nos formulários de autenticação e alteração de dados.
+- 🔐 **Autenticação Segura:** Login com hash `BCRYPT`, migração automática de senhas antigas e bloqueio temporário após 5 tentativas consecutivas incorretas (Rate Limiting).
+- 👁️ **Visualização de Senhas:** Alternância dinâmica de visibilidade de senha (*mostrar/ocultar*) em todos os formulários.
+- 📝 **Cadastro Público:** Criação de novos usuários com perfil padrão `Aluno` e validação de requisitos mínimos.
+- 📊 **Dashboard Executivo:** Painel administrativo com métricas rápidas (total de usuários, status da conexão e atalhos rápidos).
+- 👥 **Gerenciamento Completo (Admin):**
+  - Listagem com **pesquisa dinâmica em tempo real** (filtra por nome ou e-mail sem recarregar a página).
+  - Edição de usuários com alteração opcional de senha e nível de privilégio.
+  - Exclusão com confirmação e bloqueio de segurança contra autoexclusão da conta ativa.
+- 📄 **Relatório em PDF:** Emissão de documento analítico com cabeçalho institucional, data de emissão e linhas zebradas.
+- 🛡️ **Páginas de Erro Amigáveis:** Tratamento padronizado de exceções (400, 403, 404, 500) com interface visual integrada.
 
 ## 🚀 Executar com Docker
 
-Consulte o [guia Docker](docs/COMO_EXECUTAR_DOCKER.md). A aplicação fica em `http://localhost:8080`, o PHPMyAdmin em `http://localhost:8085` e o MySQL pode ser acessado pelo host na porta `3308`.
+Consulte o [guia Docker](docs/COMO_EXECUTAR_DOCKER.md). A aplicação fica disponível em `http://localhost:8080`, o PHPMyAdmin em `http://localhost:8085` e o MySQL na porta `3308`.
 
 ```powershell
 Copy-Item .env.example .env
-# Ative o bloco DOCKER no .env antes de subir os serviços.
+# Certifique-se de que o bloco DOCKER está ativo no .env
 docker compose up -d --build
 ```
 
-## 🖥️ Executar localmente
+## 🖥️ Executar Localmente
 
-Consulte o [guia local](docs/COMO_EXECUTAR_LOCAL.md). O servidor embutido do PHP atende em `http://127.0.0.1:8000`.
-
-## 🔐 Acesso de demonstração
-
-| Perfil | Usuário | Senha |
-| --- | --- | --- |
-| Administrador | `Alberto` | `123` |
-
-Essas credenciais são apenas para desenvolvimento local e estão no script SQL de inicialização. No primeiro login, a senha antiga em texto puro é convertida em hash.
-
-## 🧪 Validação e testes manuais
-
-Os endpoints e os resultados de validação estão descritos em [Acessos e dados de teste](docs/ACESSOS_TESTES.md). O projeto não inclui suíte automatizada de testes.
-
-## 🖼️ Preview
-
-🚧 Preview não disponível no repositório.
-
-## 📁 Estrutura principal
-
-```text
-.
-├── css/                   # Estilos das páginas
-├── docker/                # Configurações de PHP e Apache
-├── docs/                  # Guias de execução, acessos e análise
-├── js/                    # Interações da interface
-├── auth.php               # Sessão, acesso e CSRF
-├── conexao.php            # Carregamento do .env e conexão MySQL
-├── cadastro*.php          # Cadastro de usuários
-├── login.php              # Validação de credenciais
-├── listarUsuarios.php     # Lista administrativa
-└── relatorioUsuario.php   # Relatório em PDF
-```
-
-## 🛠️ Comandos úteis
+Consulte o [guia local](docs/COMO_EXECUTAR_LOCAL.md). O servidor embutido do PHP atende em `http://127.0.0.1:8000`:
 
 ```bash
 composer install
 php -S 127.0.0.1:8000 -t .
-docker compose up -d --build
-docker compose ps
-docker compose logs -f app mysql
 ```
 
-> Estes são comandos básicos. Consulte os arquivos em `docs/` para a configuração completa de cada ambiente.
+## 🔐 Acessos de Demonstração (Multi-perfil)
 
-## 🔭 Melhorias futuras
+| Perfil | Usuário | Senha | E-mail | Privilégios & Funcionalidades |
+| --- | --- | --- | --- | --- |
+| **Administrador** | `Alberto` | `123` | `alberto@email.com` | Controle total, listagem, edição, exclusão, relatório PDF e cadastro com seleção de perfis |
+| **Professor** | `ProfessorCarlos` | `12345678` | `professor@escola.com` | Painel docente exclusivo (Diário de Classe, Notas, Turmas). Sem acesso administrativo (403) |
+| **Aluno** | `AlunoLucas` | `12345678` | `aluno@escola.com` | Portal do estudante (Boletim, Secretaria Virtual, Dados). Sem acesso administrativo (403) |
 
-- Adicionar recuperação de senha e limitação de tentativas de login.
-- Criar testes automatizados para autenticação e operações de usuários.
-- Migrar gradualmente as páginas PHP para uma estrutura de aplicação mais modular.
+> No primeiro acesso com senhas legadas, a conversão para hash seguro (`password_hash`) ocorre automaticamente no banco.
+
+## 🧪 Suíte de Testes Automatizados
+
+O projeto inclui uma suíte completa de testes de integração automatizados em `tests/test_system.php`, cobrindo 10 fluxos fundamentais:
+
+```bash
+# Execução no container Docker:
+docker exec cadastro-web-app-1 php /var/www/html/tests/test_system.php
+
+# Ou execução local:
+php tests/test_system.php http://127.0.0.1:8000
+```
+
+**Cenários cobertos:**
+1. Acesso à tela de Login (`index.php`)
+2. Acesso à tela de Cadastro (`cadastroUsuario.php`)
+3. Proteção de rotas privadas contra acessos anônimos (`home.php`)
+4. Rejeição de credenciais inválidas e rate limiting
+5. Autenticação com credenciais válidas
+6. Renderização do dashboard autenticado
+7. Acesso e renderização da lista de usuários
+8. Formulário de edição de usuários
+9. Emissão e integridade de binário PDF (`relatorioUsuario.php`)
+10. Encerramento seguro de sessão com CSRF (`logout.php`)
+
+## 📁 Estrutura do Projeto
+
+```text
+.
+├── css/                   # Estilos globais e Design System (style.css, estilo.css)
+├── docker/                # Configurações de PHP e Apache
+├── docs/                  # Guias de execução e documentação detalhada
+├── js/                    # Scripts de interação (index.js)
+├── tests/                 # Suíte de testes automatizados (test_system.php)
+├── auth.php               # Gestão de sessões, perfis, CSRF e telas de erro
+├── conexao.php            # Leitura do .env e conexão resiliente com o MySQL
+├── index.php              # Tela de Login com feedback de tentativas
+├── cadastroUsuario.php    # Formulário público de novo cadastro
+├── home.php               # Dashboard principal com métricas
+├── listarUsuarios.php     # Painel de gestão com pesquisa em tempo real
+├── editar.php             # Edição de usuários e permissões
+├── relatorioUsuario.php   # Gerador de relatório PDF com Dompdf
+└── Script-BD-Escola.txt   # Script SQL de inicialização do banco
+```
 
 <div align="center">
 

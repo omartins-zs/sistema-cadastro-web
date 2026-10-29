@@ -1,6 +1,12 @@
 {
+    "name": "gabriel/cadastro-web",
+    "description": "Sistema de Cadastro Web em PHP e MySQL",
+    "type": "project",
     "require": {
         "dompdf/dompdf": "^3.1.6",
         "vlucas/phpdotenv": "^5.6"
+    },
+    "scripts": {
+        "test": "php tests/test_system.php"
     }
 }
