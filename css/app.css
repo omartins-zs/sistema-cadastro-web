@@ -3,22 +3,24 @@
    ========================================================================== */
 
 :root {
+  color-scheme: dark !important;
+
   /* Colors */
   --bg-main: #0b0f19;
   --bg-gradient: radial-gradient(circle at 50% -10%, #1e293b 0%, #0f172a 60%, #080c14 100%);
-  --surface-card: rgba(30, 41, 59, 0.75);
-  --surface-card-hover: rgba(30, 41, 59, 0.9);
-  --surface-input: rgba(15, 23, 42, 0.7);
+  --surface-card: rgba(30, 41, 59, 0.78);
+  --surface-card-hover: rgba(30, 41, 59, 0.92);
+  --surface-input: rgba(15, 23, 42, 0.75);
   --surface-input-focus: rgba(15, 23, 42, 0.95);
   --border-card: rgba(255, 255, 255, 0.1);
-  --border-input: rgba(148, 163, 184, 0.25);
+  --border-input: rgba(148, 163, 184, 0.3);
   --border-input-focus: #38bdf8;
   
   --primary-gradient: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
   --primary-hover: linear-gradient(135deg, #0ea5e9 0%, #1d4ed8 100%);
   --primary-glow: 0 4px 18px rgba(37, 99, 235, 0.4);
   
-  --text-main: #f8fafc;
+  --text-main: #ffffff;
   --text-muted: #94a3b8;
   --text-subtle: #64748b;
   
@@ -50,6 +52,7 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  color-scheme: dark !important;
 }
 
 body {
@@ -62,6 +65,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark !important;
 }
 
 /* Page Layout */
@@ -74,16 +78,6 @@ main {
   padding: 2.5rem 1.25rem !important;
   background: transparent !important;
   box-shadow: none !important;
-}
-
-/* Browser Autofill Styling */
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-text-fill-color: #f8fafc !important;
-  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
-  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Container Wrapper */
@@ -146,7 +140,7 @@ input:-webkit-autofill:active {
 .auth-header h1 {
   font-size: 1.65rem !important;
   font-weight: 700 !important;
-  color: var(--text-main) !important;
+  color: #ffffff !important;
   letter-spacing: -0.02em;
   margin-bottom: 0.4rem !important;
 }
@@ -221,7 +215,7 @@ input:-webkit-autofill:active {
 .form-label {
   font-size: 0.86rem;
   font-weight: 600;
-  color: #cbd5e1 !important;
+  color: #e2e8f0 !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -240,13 +234,14 @@ input:-webkit-autofill:active {
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-subtle) !important;
+  color: #94a3b8 !important;
   font-size: 1.05rem;
   pointer-events: none;
   transition: var(--transition);
-  z-index: 2;
+  z-index: 3;
 }
 
+/* Form Input & Select Controls */
 .form-control,
 .form-input,
 .auth-form input[type="text"],
@@ -254,26 +249,27 @@ input:-webkit-autofill:active {
 .auth-form input[type="email"],
 .auth-form select {
   width: 100% !important;
-  height: 48px !important;
+  height: 50px !important;
   padding: 0 14px 0 44px !important;
-  background-color: var(--surface-input) !important;
+  background-color: #0f172a !important;
   border: 1.5px solid var(--border-input) !important;
   border-radius: var(--radius-md) !important;
-  color: var(--text-main) !important;
+  color: #ffffff !important;
   font-family: inherit !important;
-  font-size: 0.95rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 500 !important;
   outline: none !important;
   transition: var(--transition);
   -webkit-appearance: none;
   appearance: none;
-  box-shadow: none !important;
+  color-scheme: dark !important;
 }
 
 .form-control::placeholder,
 .form-input::placeholder,
 .auth-form input::placeholder {
-  color: var(--text-subtle) !important;
-  opacity: 0.8;
+  color: #64748b !important;
+  opacity: 0.9;
 }
 
 /* Hover & Focus States */
@@ -281,21 +277,43 @@ input:-webkit-autofill:active {
 .form-input:hover,
 .auth-form input:hover,
 .auth-form select:hover {
-  border-color: rgba(148, 163, 184, 0.45) !important;
+  border-color: rgba(148, 163, 184, 0.55) !important;
 }
 
 .form-control:focus,
 .form-input:focus,
 .auth-form input:focus,
 .auth-form select:focus {
-  background-color: var(--surface-input-focus) !important;
-  border-color: var(--border-input-focus) !important;
-  box-shadow: 0 0 0 3.5px rgba(56, 189, 248, 0.18) !important;
+  background-color: #0b1120 !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3.5px rgba(56, 189, 248, 0.22) !important;
 }
 
-/* Change left icon color when input is focused */
+/* Icon Highlight on Focus */
 .input-wrapper:focus-within .input-icon-left {
   color: #38bdf8 !important;
+}
+
+/* ==========================================================================
+   BROWSER AUTOFILL FIX (Chrome, Edge, Safari, Opera)
+   Impede fundo branco e texto invisível no preenchimento automático.
+   ========================================================================== */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+.form-control:-webkit-autofill,
+.auth-form input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
+  color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0 1000px #1e293b inset !important;
+  box-shadow: 0 0 0 1000px #1e293b inset !important;
+  background-color: #1e293b !important;
+  caret-color: #ffffff !important;
+  border-color: #38bdf8 !important;
+  font-size: 0.98rem !important;
+  font-weight: 500 !important;
+  transition: background-color 50000s ease-in-out 0s !important;
 }
 
 /* Password Toggle Icon/Button */
@@ -311,7 +329,7 @@ input:-webkit-autofill:active {
   margin: 0 !important;
   width: auto !important;
   height: auto !important;
-  color: var(--text-subtle) !important;
+  color: #94a3b8 !important;
   cursor: pointer !important;
   border-radius: var(--radius-sm) !important;
   display: flex !important;
@@ -977,4 +995,3 @@ input:-webkit-autofill:active {
     flex-direction: column;
   }
 }
-
