@@ -111,6 +111,9 @@ $boletimImpressao = render_boletim_impressao(
                 <a href="home.php" class="btn btn-secondary btn-sm">
                     <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
                 </a>
+                <a href="baixar.php?boletim=1" class="btn btn-secondary btn-sm">
+                    <i class="fa-solid fa-file-arrow-down"></i> Baixar PDF
+                </a>
                 <button type="button" class="btn btn-primary btn-sm" onclick="window.print()" style="margin-top:0;">
                     <i class="fa-solid fa-print"></i> Imprimir Boletim
                 </button>

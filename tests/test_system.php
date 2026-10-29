@@ -312,9 +312,32 @@ foreach ($documentosEsperados as $tipoDoc => $trecho) {
         if ($doc['status'] !== 200 || !str_contains($doc['body'], 'doc-paper')) return "Documento não renderizado";
         if (!str_contains($doc['body'], $tipoDoc) || !str_contains($doc['body'], $trecho)) return "Conteúdo do documento incorreto";
         if (!str_contains($doc['body'], 'AlunoLucas') || !str_contains($doc['body'], 'Chave de autenticidade')) return "Dados do aluno/chave ausentes";
+
+        $pdf = http_req("{$baseUrl}/baixar.php?doc={$loc[1]}", 'GET', [], $cookieAluno);
+        if ($pdf['status'] !== 200 || !str_starts_with($pdf['body'], '%PDF-')) return "Download não retornou um PDF válido";
+        if (stripos($pdf['headers'], 'Content-Disposition: attachment') === false) return "PDF não veio como download (attachment)";
         return true;
     });
 }
+
+run_test("Aluno baixa o boletim em PDF (baixar.php?boletim=1)", function() use ($baseUrl, $cookieAluno) {
+    $pdf = http_req("{$baseUrl}/baixar.php?boletim=1", 'GET', [], $cookieAluno);
+    if ($pdf['status'] !== 200 || !str_starts_with($pdf['body'], '%PDF-')) return "Boletim não retornou PDF válido";
+    if (stripos($pdf['headers'], 'attachment') === false) return "Boletim não veio como download";
+    return true;
+});
+
+run_test("Download de PDF de outro usuário é negado (404)", function() use ($baseUrl, $cookieProf) {
+    $pdf = http_req("{$baseUrl}/baixar.php?doc=1", 'GET', [], $cookieProf);
+    if ($pdf['status'] !== 404) return "Esperava 404, recebeu {$pdf['status']}";
+    return true;
+});
+
+run_test("Download de PDF sem login redireciona ao login", function() use ($baseUrl) {
+    $pdf = http_req("{$baseUrl}/baixar.php?boletim=1");
+    if ($pdf['status'] !== 302) return "Esperava 302, recebeu {$pdf['status']}";
+    return true;
+});
 
 run_test("Documento da secretaria de outro usuário não é exibido", function() use ($baseUrl, $cookieProf) {
     $res = http_req("{$baseUrl}/secretaria.php?ver=1", 'GET', [], $cookieProf);

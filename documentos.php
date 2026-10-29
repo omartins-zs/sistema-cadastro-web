@@ -166,3 +166,54 @@ function render_boletim_impressao(array $aluno, array $notas): string
         . doc_rodape($protocolo, $data, $chave)
         . '</article>';
 }
+
+/**
+ * Envolve o HTML de um documento com CSS compatível com o Dompdf (sem grid/flex).
+ */
+function doc_html_pdf(string $articleHtml, string $titulo): string
+{
+    $css = <<<CSS
+@page { margin: 18mm 16mm; }
+body { font-family: "DejaVu Sans", sans-serif; font-size: 11px; color: #111827; line-height: 1.55; }
+.doc-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 16px; }
+.doc-header h1 { font-size: 14px; text-transform: uppercase; margin: 0 0 3px; color: #0f172a; }
+.doc-header span { font-size: 10px; color: #475569; }
+.doc-title { text-align: center; font-size: 14px; text-transform: uppercase; margin: 0 0 14px; color: #0f172a; }
+.doc-info { background: #f1f5f9; padding: 8px 10px; margin-bottom: 14px; font-size: 10.5px; }
+.doc-info div { display: inline-block; width: 48%; margin: 2px 0; }
+p { margin: 0 0 10px; text-align: justify; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 10.5px; }
+th { background: #0f172a; color: #ffffff; padding: 6px; text-align: center; font-size: 9.5px; }
+td { border-bottom: 1px solid #e2e8f0; padding: 6px; text-align: center; }
+th:first-child, td:first-child { text-align: left; }
+.doc-ok { color: #047857; font-weight: bold; }
+.doc-bad { color: #b91c1c; font-weight: bold; }
+.doc-signature { margin-top: 42px; text-align: center; font-size: 10.5px; }
+.doc-signature div { width: 240px; border-top: 1px solid #111827; margin: 0 auto 4px; }
+.doc-footer { margin-top: 24px; border-top: 1px dashed #94a3b8; padding-top: 8px; font-size: 9px; color: #475569; }
+.doc-footer span { display: inline-block; width: 32%; }
+CSS;
+    return '<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><title>'
+        . escape_html($titulo) . '</title><style>' . $css . '</style></head><body>'
+        . $articleHtml . '</body></html>';
+}
+
+/**
+ * Gera e envia o PDF para download. Encerra a execução.
+ */
+function doc_enviar_pdf(string $articleHtml, string $titulo, string $nomeArquivo): void
+{
+    require_once __DIR__ . '/vendor/autoload.php';
+
+    $options = new Dompdf\Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isRemoteEnabled', false);
+    $options->set('defaultFont', 'DejaVu Sans');
+
+    $dompdf = new Dompdf\Dompdf($options);
+    $dompdf->loadHtml(doc_html_pdf($articleHtml, $titulo), 'UTF-8');
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+    $dompdf->stream($nomeArquivo, ['Attachment' => true]);
+    exit;
+}

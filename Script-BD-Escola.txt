@@ -41,3 +41,16 @@ VALUES
     ('Alberto', '123', 'alberto@email.com', 'Admin'),
     ('ProfessorCarlos', '12345678', 'professor@escola.com', 'Prof'),
     ('AlunoLucas', '12345678', 'aluno@escola.com', 'Aluno');
+
+INSERT INTO `boletim` (`usuario_id`, `disciplina`, `nota_b1`, `nota_b2`, `nota_b3`, `nota_b4`, `frequencia`, `status`)
+SELECT u.id, d.disciplina, d.b1, d.b2, d.b3, d.b4, d.freq, 'Aprovado'
+FROM `usuarios` u
+JOIN (
+    SELECT 'Matemática' AS disciplina, 8.5 AS b1, 9.0 AS b2, 8.0 AS b3, 9.5 AS b4, 96 AS freq
+    UNION ALL SELECT 'Língua Portuguesa', 9.0, 8.5, 9.0, 8.5, 98
+    UNION ALL SELECT 'História', 7.5, 8.0, 8.5, 9.0, 92
+    UNION ALL SELECT 'Geografia', 8.0, 8.5, 8.0, 8.5, 95
+    UNION ALL SELECT 'Ciências Naturais', 9.5, 9.0, 9.5, 9.0, 100
+    UNION ALL SELECT 'Língua Inglesa', 8.5, 9.0, 9.0, 9.5, 94
+) d
+WHERE u.usuario = 'AlunoLucas';

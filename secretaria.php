@@ -134,8 +134,11 @@ $stmt->close();
                 <a href="secretaria.php" class="btn btn-secondary btn-sm">
                     <i class="fa-solid fa-arrow-left"></i> Voltar à Secretaria
                 </a>
+                <a href="baixar.php?doc=<?= (int) $verId ?>" class="btn btn-secondary btn-sm">
+                    <i class="fa-solid fa-file-arrow-down"></i> Baixar PDF
+                </a>
                 <button type="button" class="btn btn-primary btn-sm" onclick="window.print()" style="margin-top:0;width:auto;">
-                    <i class="fa-solid fa-print"></i> Imprimir / Salvar PDF
+                    <i class="fa-solid fa-print"></i> Imprimir
                 </button>
             </div>
 
@@ -195,9 +198,12 @@ $stmt->close();
                                     <td><strong style="color: #38bdf8;"><?= escape_html($row['protocolo']) ?></strong></td>
                                     <td><?= escape_html($row['tipo_documento']) ?></td>
                                     <td style="color: var(--text-muted);"><?= escape_html($row['data_fmt']) ?></td>
-                                    <td style="text-align: right;">
+                                    <td style="text-align: right; white-space: nowrap;">
                                         <a class="btn btn-secondary btn-sm" href="secretaria.php?ver=<?= (int) $row['id'] ?>">
-                                            <i class="fa-solid fa-eye"></i> Visualizar / Imprimir
+                                            <i class="fa-solid fa-eye"></i> Visualizar
+                                        </a>
+                                        <a class="btn btn-primary btn-sm" style="width:auto;margin-top:0;" href="baixar.php?doc=<?= (int) $row['id'] ?>">
+                                            <i class="fa-solid fa-file-arrow-down"></i> Baixar PDF
                                         </a>
                                     </td>
                                 </tr>
