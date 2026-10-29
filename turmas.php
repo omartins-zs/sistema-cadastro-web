@@ -98,6 +98,9 @@ $mediaGlobalGeral = !empty($mediasPorDisciplina)
             </div>
 
             <div class="table-actions">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="abrirGradeModal()">
+                    <i class="fa-solid fa-calendar-days"></i> Grade Semanal
+                </button>
                 <a href="comunicados.php" class="btn btn-secondary btn-sm">
                     <i class="fa-solid fa-bullhorn"></i> Comunicados
                 </a>
@@ -192,10 +195,15 @@ $mediaGlobalGeral = !empty($mediasPorDisciplina)
 
         <!-- Tabela do Corpo Discente Matriculado -->
         <div class="table-card no-print">
-            <div class="table-header-bar">
+            <div class="table-header-bar" style="flex-wrap:wrap;gap:1rem;">
                 <div class="table-title">
                     <h2>Corpo Discente Matriculado</h2>
                     <span>Relação oficial de alunos cadastrados aptos para lançamento pedagógico</span>
+                </div>
+
+                <div class="search-wrapper" style="width:260px;margin:0;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="filtro-alunos-turma" class="search-input" placeholder="Filtrar aluno..." onkeyup="filtrarAlunosTurma()">
                 </div>
             </div>
 
@@ -203,17 +211,17 @@ $mediaGlobalGeral = !empty($mediasPorDisciplina)
                 <table class="modern-table">
                     <thead>
                         <tr>
-                            <th>Matrícula</th>
-                            <th>Nome do Aluno</th>
-                            <th>E-mail Acadêmico</th>
-                            <th>Situação Cadastral</th>
-                            <th style="text-align: right;">Ações Pedagógicas</th>
+                            <th style="width: 15%;">Matrícula</th>
+                            <th style="width: 30%;">Nome do Aluno</th>
+                            <th style="width: 25%;">E-mail Acadêmico</th>
+                            <th style="width: 15%;">Situação Cadastral</th>
+                            <th style="width: 15%; text-align: right;">Ações Pedagógicas</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php if (!empty($listaAlunos)): ?>
                         <?php foreach ($listaAlunos as $al): ?>
-                            <tr>
+                            <tr class="linha-discente">
                                 <td><strong style="color:#38bdf8;">#<?= str_pad((string)$al['id'], 6, '0', STR_PAD_LEFT) ?></strong></td>
                                 <td>
                                     <div style="display:flex;align-items:center;gap:0.6rem;">
@@ -297,6 +305,88 @@ $mediaGlobalGeral = !empty($mediasPorDisciplina)
         </div>
     </div>
 
+    <!-- Modal Grade Horária Semanal -->
+    <div id="modal-grade" class="modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+        <div class="modal-box table-card" style="max-width:720px;width:100%;margin:auto;box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+                <div>
+                    <h3 style="font-size:1.25rem;color:#ffffff;margin:0 0 0.2rem;display:flex;align-items:center;gap:0.5rem;">
+                        <i class="fa-solid fa-calendar-days" style="color:#38bdf8;"></i> Grade Horária Semanal
+                    </h3>
+                    <span style="font-size:0.85rem;color:var(--text-muted);">Horários oficiais de aulas atribuídas para o semestre</span>
+                </div>
+                <button type="button" onclick="fecharGradeModal()" style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modern-table-responsive" style="margin-bottom:1.25rem;">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Dia da Semana</th>
+                            <th>Horário</th>
+                            <th>Turma</th>
+                            <th>Disciplina</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color:#38bdf8;">Segunda-feira</strong></td>
+                            <td>08:00 - 10:00</td>
+                            <td>3º Ano A - Médio</td>
+                            <td>Matemática</td>
+                            <td>Sala 204 - Bloco B</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#38bdf8;">Segunda-feira</strong></td>
+                            <td>14:00 - 16:00</td>
+                            <td>1º Ano A - Fund.</td>
+                            <td>Língua Portuguesa</td>
+                            <td>Sala 102 - Bloco A</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#38bdf8;">Terça-feira</strong></td>
+                            <td>10:15 - 12:00</td>
+                            <td>2º Ano B - Médio</td>
+                            <td>Física</td>
+                            <td>Lab. 108 - Bloco A</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#38bdf8;">Quarta-feira</strong></td>
+                            <td>08:00 - 10:00</td>
+                            <td>3º Ano A - Médio</td>
+                            <td>Matemática</td>
+                            <td>Sala 204 - Bloco B</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#38bdf8;">Quinta-feira</strong></td>
+                            <td>10:15 - 12:00</td>
+                            <td>2º Ano B - Médio</td>
+                            <td>Física</td>
+                            <td>Lab. 108 - Bloco A</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color:#38bdf8;">Sexta-feira</strong></td>
+                            <td>14:00 - 16:00</td>
+                            <td>1º Ano A - Fund.</td>
+                            <td>Língua Portuguesa</td>
+                            <td>Sala 102 - Bloco A</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+                <button type="button" class="btn btn-secondary" onclick="fecharGradeModal()">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="window.print()" style="margin-top:0;width:auto;">
+                    <i class="fa-solid fa-print"></i> Imprimir Grade
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="./js/index.js?v=<?= time() ?>"></script>
     <script>
         function verAlunosModal(turmaNome, disciplina) {
@@ -308,6 +398,22 @@ $mediaGlobalGeral = !empty($mediasPorDisciplina)
 
         function fecharAlunosModal() {
             document.getElementById('modal-alunos').style.display = 'none';
+        }
+
+        function abrirGradeModal() {
+            document.getElementById('modal-grade').style.display = 'flex';
+        }
+
+        function fecharGradeModal() {
+            document.getElementById('modal-grade').style.display = 'none';
+        }
+
+        function filtrarAlunosTurma() {
+            var val = document.getElementById('filtro-alunos-turma').value.toLowerCase().trim();
+            document.querySelectorAll('.linha-discente').forEach(function(row) {
+                var texto = row.textContent.toLowerCase();
+                row.style.display = texto.includes(val) ? '' : 'none';
+            });
         }
     </script>
 </body>

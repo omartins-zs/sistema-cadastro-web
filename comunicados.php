@@ -101,9 +101,16 @@ $lista = $conn->query(
             </div>
 
             <div class="table-card">
-                <div class="table-title" style="margin-bottom:1.25rem;">
-                    <h2><i class="fa-solid fa-bullhorn" style="color:#38bdf8;margin-right:8px;"></i> Publicados (<?= count($lista) ?>)</h2>
-                    <span>Mais recentes primeiro</span>
+                <div class="table-header-bar" style="flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem;">
+                    <div class="table-title">
+                        <h2><i class="fa-solid fa-bullhorn" style="color:#38bdf8;margin-right:8px;"></i> Publicados (<?= count($lista) ?>)</h2>
+                        <span>Mais recentes primeiro</span>
+                    </div>
+
+                    <div class="search-wrapper" style="width:220px;margin:0;">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="filtro-comunicados" class="search-input" placeholder="Filtrar aviso..." onkeyup="filtrarComunicados()">
+                    </div>
                 </div>
 
                 <?php if (!$lista): ?>
@@ -136,6 +143,15 @@ $lista = $conn->query(
         </div>
     </div>
     <script src="./js/index.js?v=<?= time() ?>"></script>
+    <script>
+        function filtrarComunicados() {
+            var val = document.getElementById('filtro-comunicados').value.toLowerCase().trim();
+            document.querySelectorAll('.comunicado-item').forEach(function(item) {
+                var texto = item.textContent.toLowerCase();
+                item.style.display = texto.includes(val) ? '' : 'none';
+            });
+        }
+    </script>
 </body>
 </html>
 

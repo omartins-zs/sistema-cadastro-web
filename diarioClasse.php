@@ -83,6 +83,28 @@ $alunos->execute();
 $lista = $alunos->get_result()->fetch_all(MYSQLI_ASSOC);
 $alunos->close();
 
+// Cálculo de rendimento da disciplina
+$totalAlunosDisc = count($lista);
+$qtdAprovados = 0;
+$qtdRecuperacao = 0;
+$somaMediasDisc = 0.0;
+$avaliados = 0;
+
+foreach ($lista as $item) {
+    if ($item['nota_b1'] !== null || $item['nota_b2'] !== null || $item['nota_b3'] !== null || $item['nota_b4'] !== null) {
+        $mAluno = ((float)$item['nota_b1'] + (float)$item['nota_b2'] + (float)$item['nota_b3'] + (float)$item['nota_b4']) / 4;
+        $fAluno = (int)($item['frequencia'] ?? 100);
+        $somaMediasDisc += $mAluno;
+        $avaliados++;
+        if ($mAluno >= 6.0 && $fAluno >= 75) {
+            $qtdAprovados++;
+        } else {
+            $qtdRecuperacao++;
+        }
+    }
+}
+$mediaTurmaDisc = $avaliados > 0 ? round($somaMediasDisc / $avaliados, 1) : 0.0;
+
 $msgOk = isset($_GET['salvo']) ? ((int) $_GET['salvo'] > 0 ? ((int) $_GET['salvo'] . ' lançamento(s) salvo(s) com sucesso!') : 'Nada foi alterado: preencha ao menos uma nota ou frequência.') : null;
 $msgErro = $_GET['erro'] ?? null;
 ?>
@@ -102,21 +124,70 @@ $msgErro = $_GET['erro'] ?? null;
         <?= layout_alert($msgOk, 'success') ?>
         <?= layout_alert($msgErro, 'danger') ?>
 
-        <div class="table-card">
-            <div class="table-header-bar">
+        <!-- Métricas da Disciplina -->
+        <div class="stats-row no-print" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div class="stat-icon dash-icon-blue">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h4><?= $totalAlunosDisc ?></h4>
+                    <span>Estudantes Matriculados</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon dash-icon-emerald">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                    <h4><?= number_format($mediaTurmaDisc, 1, ',', '.') ?></h4>
+                    <span>Média da Disciplina</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon dash-icon-purple">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h4><?= $qtdAprovados ?></h4>
+                    <span>Aprovados (>= 6,0)</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon dash-icon-blue" style="background:rgba(239, 68, 68, 0.15);color:#fca5a5;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div class="stat-info">
+                    <h4><?= $qtdRecuperacao ?></h4>
+                    <span>Em Recuperação / Risco</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card no-print">
+            <div class="table-header-bar" style="flex-wrap:wrap;gap:1rem;">
                 <div class="table-title">
-                    <h2><i class="fa-solid fa-chalkboard" style="color:#38bdf8;margin-right:8px;"></i> Diário de Classe</h2>
+                    <h2><i class="fa-solid fa-chalkboard" style="color:#38bdf8;margin-right:8px;"></i> Diário: <?= escape_html($disciplina) ?></h2>
                     <span>Lance notas dos 4 bimestres e a frequência. Média e situação são calculadas automaticamente.</span>
                 </div>
 
-                <form method="get" action="diarioClasse.php" class="table-actions">
-                    <label for="disciplina" class="form-label" style="margin:0;">Disciplina</label>
-                    <select id="disciplina" name="disciplina" class="select-inline" onchange="this.form.submit()">
-                        <?php foreach (DISCIPLINAS as $d): ?>
-                            <option value="<?= escape_html($d) ?>" <?= $d === $disciplina ? 'selected' : '' ?>><?= escape_html($d) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </form>
+                <div class="table-actions" style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                    <div class="search-wrapper" style="width:240px;margin:0;">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="filtro-diario" class="search-input" placeholder="Filtrar aluno..." onkeyup="filtrarAlunosDiario()">
+                    </div>
+
+                    <form method="get" action="diarioClasse.php" style="margin:0;">
+                        <select id="disciplina" name="disciplina" class="select-inline" onchange="this.form.submit()">
+                            <?php foreach (DISCIPLINAS as $d): ?>
+                                <option value="<?= escape_html($d) ?>" <?= $d === $disciplina ? 'selected' : '' ?>><?= escape_html($d) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+                </div>
             </div>
 
             <?php if (!$lista): ?>
@@ -173,9 +244,12 @@ $msgErro = $_GET['erro'] ?? null;
                 </div>
 
                 <div class="form-actions-row" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
-                    <div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
                         <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFreq100()">
                             <i class="fa-solid fa-check-double"></i> Frequência 100% para Todos
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+                            <i class="fa-solid fa-print"></i> Imprimir Diário
                         </button>
                     </div>
                     <div style="display:flex;gap:0.75rem;align-items:center;">
@@ -223,6 +297,78 @@ $msgErro = $_GET['erro'] ?? null;
                 }
             });
         }
+
+        function filtrarAlunosDiario() {
+            var val = document.getElementById('filtro-diario').value.toLowerCase().trim();
+            document.querySelectorAll('.linha-aluno').forEach(function(row) {
+                var texto = row.textContent.toLowerCase();
+                row.style.display = texto.includes(val) ? '' : 'none';
+            });
+        }
     </script>
+
+    <!-- Versão de Impressão Oficial do Diário de Classe -->
+    <div class="print-only">
+        <article class="doc-paper">
+            <div class="doc-header">
+                <h1>Diário Oficial de Rendimento Escolar - 2026</h1>
+                <span>Cadastro Web - Sistema Integrado de Gestão Acadêmica</span>
+            </div>
+            
+            <h2 class="doc-title">Diário de Classe: <?= escape_html($disciplina) ?></h2>
+
+            <div class="doc-info" style="grid-template-columns: 1fr 1fr; margin-bottom: 1.5rem;">
+                <div><strong>Docente Responsável:</strong> <?= escape_html($_SESSION['usuario'] ?? 'Professor') ?></div>
+                <div><strong>Disciplina:</strong> <?= escape_html($disciplina) ?></div>
+                <div><strong>Ano Letivo:</strong> 2026</div>
+                <div><strong>Data de Emissão:</strong> <?= date('d/m/Y H:i') ?></div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align:left;">Estudante</th>
+                        <th>1º Bim</th>
+                        <th>2º Bim</th>
+                        <th>3º Bim</th>
+                        <th>4º Bim</th>
+                        <th>Freq.</th>
+                        <th>Média</th>
+                        <th>Situação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($lista as $item): 
+                    $m = ($item['nota_b1'] !== null || $item['nota_b2'] !== null || $item['nota_b3'] !== null || $item['nota_b4'] !== null)
+                        ? round(((float)$item['nota_b1'] + (float)$item['nota_b2'] + (float)$item['nota_b3'] + (float)$item['nota_b4']) / 4, 1)
+                        : null;
+                    $f = $item['frequencia'] !== null ? (int)$item['frequencia'] : 100;
+                    $sit = $m !== null ? calc_situacao($m, $f) : '–';
+                ?>
+                    <tr>
+                        <td style="text-align:left;"><strong><?= escape_html($item['usuario']) ?></strong></td>
+                        <td><?= $item['nota_b1'] !== null ? number_format((float)$item['nota_b1'], 1, ',', '.') : '–' ?></td>
+                        <td><?= $item['nota_b2'] !== null ? number_format((float)$item['nota_b2'], 1, ',', '.') : '–' ?></td>
+                        <td><?= $item['nota_b3'] !== null ? number_format((float)$item['nota_b3'], 1, ',', '.') : '–' ?></td>
+                        <td><?= $item['nota_b4'] !== null ? number_format((float)$item['nota_b4'], 1, ',', '.') : '–' ?></td>
+                        <td><?= $f ?>%</td>
+                        <td><strong><?= $m !== null ? number_format($m, 1, ',', '.') : '–' ?></strong></td>
+                        <td><?= escape_html($sit) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <div class="doc-signature">
+                <div></div>
+                <span>Assinatura do Docente Responsável</span>
+            </div>
+
+            <div class="doc-footer">
+                <div>Autenticação: DIA-<?= date('Y') ?>-<?= strtoupper(substr(md5($disciplina . date('Ymd')), 0, 8)) ?></div>
+                <div>Documento gerado automaticamente pelo Sistema Escolar</div>
+            </div>
+        </article>
+    </div>
 </body>
 </html>

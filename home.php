@@ -169,6 +169,15 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                     </div>
                 </div>
 
+                <div class="stat-box">
+                    <div class="stat-icon dash-icon-purple">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>3 Turmas</h4><span>Carga atribuída</span>
+                    </div>
+                </div>
+
             <?php else: ?>
                 <div class="stat-box">
                     <div class="stat-icon dash-icon-emerald">
