@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/auth.php';
 
 Dotenv\Dotenv::createImmutable(__DIR__)->safeLoad();
 
@@ -23,6 +24,10 @@ try {
     $conn->set_charset('utf8mb4');
 } catch (mysqli_sql_exception $exception) {
     error_log('Database connection failed: ' . $exception->getMessage());
-    http_response_code(500);
-    exit('Não foi possível conectar ao banco de dados. Verifique o arquivo .env e confirme que o MySQL está ativo.');
+    render_error_view(
+        500,
+        'Falha no Banco de Dados',
+        'Não foi possível estabelecer conexão com o MySQL. Verifique o status do serviço e as variáveis de ambiente no arquivo .env.',
+        'index.php'
+    );
 }

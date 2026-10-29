@@ -12,4 +12,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `usuarios` (`usuario`, `senha`, `email`, `nivel`)
-VALUES ('Alberto', '123', 'alberto@email.com', 'Admin');
+VALUES 
+    ('Alberto', '123', 'alberto@email.com', 'Admin'),
+    ('ProfessorCarlos', '12345678', 'professor@escola.com', 'Prof'),
+    ('AlunoLucas', '12345678', 'aluno@escola.com', 'Aluno');

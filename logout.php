@@ -4,8 +4,7 @@ require_once __DIR__ . '/auth.php';
 start_app_session();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_is_valid($_POST['csrf_token'] ?? null)) {
-    http_response_code(400);
-    exit('Solicitação inválida.');
+    render_error_view(400, 'Solicitação Inválida', 'Token CSRF ausente ou requisição de logout inválida.', 'home.php');
 }
 
 $_SESSION = [];

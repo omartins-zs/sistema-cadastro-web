@@ -10,6 +10,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_is_valid($_POST['csrf_token']
     exit;
 }
 
+// Verificação de taxa de tentativas (Rate Limiting)
+$agora = time();
+$tempoBloqueio = (int) ($_SESSION['login_lockout_until'] ?? 0);
+if ($tempoBloqueio > $agora) {
+    $segundosRestantes = $tempoBloqueio - $agora;
+    header('Location: index.php?erro=bloqueado&tempo=' . $segundosRestantes);
+    exit;
+}
+
 $usuario = trim($_POST['txt_usuario'] ?? '');
 $senha = $_POST['txt_senha'] ?? '';
 
@@ -39,9 +48,23 @@ if ($usuarioEncontrado) {
 }
 
 if (!$senhaValida) {
+    // Incrementa contagem de falhas
+    $tentativas = ((int) ($_SESSION['login_tentativas'] ?? 0)) + 1;
+    $_SESSION['login_tentativas'] = $tentativas;
+
+    if ($tentativas >= 5) {
+        $_SESSION['login_lockout_until'] = time() + 30; // Bloqueio temporário de 30s
+        $_SESSION['login_tentativas'] = 0;
+        header('Location: index.php?erro=bloqueado&tempo=30');
+        exit;
+    }
+
     header('Location: index.php?erro=credenciais');
     exit;
 }
+
+// Login efetuado: zera contadores de bloqueio
+unset($_SESSION['login_tentativas'], $_SESSION['login_lockout_until']);
 
 if ($senhaLegada) {
     $novoHash = password_hash($senha, PASSWORD_DEFAULT);
