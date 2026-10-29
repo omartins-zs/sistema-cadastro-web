@@ -87,10 +87,10 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                 <table class="modern-table" id="users-table">
                     <thead>
                         <tr>
-                            <th><i class="fa-solid fa-user"></i> Usuário</th>
-                            <th><i class="fa-solid fa-envelope"></i> E-mail</th>
-                            <th><i class="fa-solid fa-id-badge"></i> Perfil</th>
-                            <th style="text-align: right;"><i class="fa-solid fa-sliders"></i> Ações</th>
+                            <th style="width: 30%;"><i class="fa-solid fa-user"></i> Usuário</th>
+                            <th style="width: 34%;"><i class="fa-solid fa-envelope"></i> E-mail</th>
+                            <th style="width: 18%;"><i class="fa-solid fa-id-badge"></i> Perfil</th>
+                            <th style="width: 18%; text-align: right;"><i class="fa-solid fa-sliders"></i> Ações</th>
                         </tr>
                     </thead>
                     <tbody>

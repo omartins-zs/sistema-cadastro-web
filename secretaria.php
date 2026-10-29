@@ -164,10 +164,10 @@ $stmt->close();
                     <table class="modern-table">
                         <thead>
                             <tr>
-                                <th><i class="fa-solid fa-hashtag"></i> Protocolo</th>
-                                <th><i class="fa-solid fa-file-lines"></i> Documento</th>
-                                <th><i class="fa-solid fa-calendar-day"></i> Data de Emissão</th>
-                                <th style="text-align: right;">Ações</th>
+                                <th style="width: 18%;"><i class="fa-solid fa-hashtag"></i> Protocolo</th>
+                                <th style="width: 44%;"><i class="fa-solid fa-file-lines"></i> Documento</th>
+                                <th style="width: 18%;"><i class="fa-solid fa-calendar-day"></i> Data de Emissão</th>
+                                <th style="width: 20%; text-align: right;">Ações</th>
                             </tr>
                         </thead>
                         <tbody>

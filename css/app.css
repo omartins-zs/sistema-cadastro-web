@@ -585,12 +585,13 @@ textarea:-webkit-autofill,
   font-size: 0.75rem;
 }
 
-/* Main Dashboard Container */
+/* Main Dashboard Container - Tela Inteira */
 .dashboard-container {
-  width: min(96%, 1440px);
-  margin: 2rem auto;
-  padding: 0 1rem;
-  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 1.5rem 0 !important;
+  padding: 0 2rem !important;
+  box-sizing: border-box !important;
 }
 
 /* Hero Welcome Banner */
@@ -846,6 +847,14 @@ textarea:-webkit-autofill,
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.08);
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modern-table-responsive::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .modern-table {
@@ -879,7 +888,7 @@ textarea:-webkit-autofill,
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  white-space: nowrap;
+  flex-wrap: wrap;
 }
 
 .modern-table tbody tr {

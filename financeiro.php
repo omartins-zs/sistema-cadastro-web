@@ -234,12 +234,12 @@ $msgPago = isset($_GET['pago']) ? 'Pagamento processado e baixado com sucesso vi
                 <table class="modern-table">
                     <thead>
                         <tr>
-                            <th>Competência</th>
-                            <th>Vencimento</th>
-                            <th>Valor</th>
-                            <th>Status</th>
-                            <th>Data de Liquidação</th>
-                            <th style="text-align: right;">Ações & Comprovantes</th>
+                            <th style="width: 22%;">Competência</th>
+                            <th style="width: 14%;">Vencimento</th>
+                            <th style="width: 14%;">Valor</th>
+                            <th style="width: 16%;">Status</th>
+                            <th style="width: 16%;">Data de Liquidação</th>
+                            <th style="width: 18%; text-align: right;">Ações & Comprovantes</th>
                         </tr>
                     </thead>
                     <tbody>
