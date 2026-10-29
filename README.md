@@ -45,12 +45,14 @@ A aplicação reúne formulários com validações avançadas, proteção de cre
   - Exclusão com confirmação e bloqueio de segurança contra autoexclusão da conta ativa.
   - Cadastro de novos usuários com escolha de perfil mantendo a sessão do administrador ativa.
 - 🎓 **Portal do Aluno:**
-  - 📖 **Boletim & Desempenho (`boletim.php`):** Consulta de notas bimestrais, médias ponderadas, frequência e comunicados dos professores.
-  - 🏛️ **Secretaria Virtual (`secretaria.php`):** Emissão instantânea de declarações oficiais autenticadas com chave digital e protocolo único.
+  - 📖 **Boletim & Desempenho (`boletim.php`):** Consulta de notas bimestrais, médias calculadas, frequência escolar, comunicados em tempo real dos professores e impressão/download exclusivo do documento em PDF (`baixar.php?boletim=1`).
+  - 🏛️ **Secretaria Virtual (`secretaria.php`):** Emissão instantânea de 4 tipos de documentos oficiais autenticados (Declaração de Matrícula, Atestado de Frequência, Histórico Parcial e Nada Consta) com chave digital SHA-256 e download em PDF (`baixar.php?doc=ID`).
+  - 💳 **Financeiro & Mensalidades (`financeiro.php`):** Acompanhamento completo da grade de mensalidades, consulta de pagamentos liquidados, emissão de comprovantes de quitação, simulação de pagamento instantâneo via PIX com QR Code e atalho para emissão da Declaração de Nada Consta.
   - 👤 **Meus Dados (`meusDados.php`):** Consulta do perfil e atualização de e-mail e senha pelo próprio aluno.
-- 👨‍🏫 **Portal do Professor:**
-  - 📋 **Diário de Classe (`diarioClasse.php`):** Lançamento e consulta de notas e faltas da turma.
-  - 🏫 **Turmas Atribuídas (`turmas.php`):** Carga horária, horários semanais e relação de estudantes.
+- 👨‍🏫 **Portal do Professor & Gestão Acadêmica:**
+  - 📋 **Diário de Classe (`diarioClasse.php`):** Lançamento de notas bimestrais (B1 a B4) e frequência de todos os alunos da disciplina, com cálculo ao vivo no navegador, preenchimento rápido de frequência e persistência via `ON DUPLICATE KEY UPDATE`.
+  - 🏫 **Turmas Atribuídas (`turmas.php`):** Grade curricular, salas, horários semanais, cálculo automático de média geral da turma e frequência, além de modal interativo para listagem dos alunos matriculados e atalho de lançamento.
+  - 📢 **Quadro de Comunicados (`comunicados.php`):** Publicação de avisos, comunicados pedagógicos e orientações oficiais com feed dinâmico integrado ao boletim dos alunos.
 - 📄 **Relatório em PDF:** Emissão de documento analítico com cabeçalho institucional, data de emissão e linhas zebradas.
 - 🛡️ **Páginas de Erro Amigáveis:** Tratamento padronizado de exceções (400, 403, 404, 500) com interface visual integrada.
 
@@ -85,7 +87,7 @@ php -S 127.0.0.1:8000 -t .
 
 ## 🧪 Suíte de Testes Automatizados
 
-O projeto inclui uma suíte completa de testes de integração automatizados em `tests/test_system.php`, cobrindo 10 fluxos fundamentais:
+O projeto inclui uma suíte completa de **37 testes de integração automatizados** em `tests/test_system.php`, cobrindo 100% dos fluxos públicos, administrativos, docentes e discentes:
 
 ```bash
 # Execução no container Docker:

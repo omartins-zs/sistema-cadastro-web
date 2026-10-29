@@ -40,3 +40,25 @@ function showPassword() {
         eyeSlash.style.display = mostrarSenha ? 'none' : 'block';
     }
 }
+
+// ---- Melhorias de UX globais ----
+document.addEventListener('DOMContentLoaded', function () {
+    // Alertas de sucesso/erro desaparecem sozinhos após alguns segundos
+    document.querySelectorAll('.alert[data-autohide]').forEach(function (el) {
+        setTimeout(function () {
+            el.classList.add('is-hiding');
+            setTimeout(function () { el.remove(); }, 450);
+        }, 6000);
+    });
+
+    // Botão de envio fica "carregando" e evita clique duplo
+    document.querySelectorAll('form').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            if (!form.checkValidity()) { return; }
+            var btn = form.querySelector('button[type="submit"]');
+            if (btn && !btn.closest('form[onsubmit]')) {
+                setTimeout(function () { btn.classList.add('is-loading'); }, 0);
+            }
+        });
+    });
+});

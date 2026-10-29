@@ -2,147 +2,227 @@
 require_once __DIR__ . '/auth.php';
 require_login();
 require_once __DIR__ . '/conexao.php';
+require_once __DIR__ . '/documentos.php';
+require_once __DIR__ . '/layout.php';
 
-$usuarioNome = $_SESSION['usuario'] ?? 'Professor';
-$usuarioNivel = $_SESSION['nivel'] ?? 'Prof';
-$primeiraLetra = strtoupper(mb_substr($usuarioNome, 0, 1, 'UTF-8'));
-$cacheVersion = time();
-
-// Alunos não podem acessar o diário de classe docente
-if ($usuarioNivel === 'Aluno') {
+$nivel = $_SESSION['nivel'] ?? 'Aluno';
+if ($nivel === 'Aluno') {
     render_error_view(403, 'Acesso Não Autorizado', 'Área restrita a professores e administradores.', 'home.php');
 }
 
-// Busca alunos com notas para o professor visualizar
-$alunosRes = $conn->query("
-    SELECT u.id, u.usuario, u.email, b.disciplina, b.nota_b1, b.nota_b2, b.nota_b3, b.nota_b4, b.frequencia, b.status 
-    FROM usuarios u
-    JOIN boletim b ON b.usuario_id = u.id
-    WHERE b.disciplina = 'Matemática'
-    ORDER BY u.usuario
-");
+$disciplina = $_REQUEST['disciplina'] ?? DISCIPLINAS[0];
+if (!in_array($disciplina, DISCIPLINAS, true)) {
+    $disciplina = DISCIPLINAS[0];
+}
+
+function nota_valida($v): ?float
+{
+    $v = trim((string) $v);
+    if ($v === '') {
+        return null;
+    }
+    $v = str_replace(',', '.', $v);
+    if (!is_numeric($v) || (float) $v < 0 || (float) $v > 10) {
+        throw new InvalidArgumentException('Notas devem estar entre 0 e 10.');
+    }
+    return round((float) $v, 1);
+}
+
+// Salvar lançamentos (Post/Redirect/Get)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_is_valid($_POST['csrf_token'] ?? null)) {
+        render_error_view(400, 'Solicitação Inválida', 'Token CSRF ausente ou expirado.', 'diarioClasse.php');
+    }
+
+    $salvos = 0;
+    try {
+        $stmt = $conn->prepare(
+            'INSERT INTO boletim (usuario_id, disciplina, nota_b1, nota_b2, nota_b3, nota_b4, frequencia, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE nota_b1 = VALUES(nota_b1), nota_b2 = VALUES(nota_b2), nota_b3 = VALUES(nota_b3),
+                                     nota_b4 = VALUES(nota_b4), frequencia = VALUES(frequencia), status = VALUES(status)'
+        );
+
+        foreach (($_POST['aluno'] ?? []) as $uid => $campos) {
+            $uid = (int) $uid;
+            $b = [];
+            foreach (['b1', 'b2', 'b3', 'b4'] as $k) {
+                $b[$k] = nota_valida($campos[$k] ?? '');
+            }
+            $freqRaw = trim((string) ($campos['freq'] ?? ''));
+            if ($uid <= 0 || ($freqRaw === '' && !array_filter($b, fn($x) => $x !== null))) {
+                continue;
+            }
+            if ($freqRaw !== '' && (!ctype_digit($freqRaw) || (int) $freqRaw > 100)) {
+                throw new InvalidArgumentException('A frequência deve ser um número entre 0 e 100.');
+            }
+            $freq = $freqRaw === '' ? 100 : (int) $freqRaw;
+            $n1 = $b['b1'] ?? 0.0; $n2 = $b['b2'] ?? 0.0; $n3 = $b['b3'] ?? 0.0; $n4 = $b['b4'] ?? 0.0;
+            $status = calc_situacao(($n1 + $n2 + $n3 + $n4) / 4, $freq);
+
+            $stmt->bind_param('isddddis', $uid, $disciplina, $n1, $n2, $n3, $n4, $freq, $status);
+            $stmt->execute();
+            $salvos++;
+        }
+        $stmt->close();
+        header('Location: diarioClasse.php?disciplina=' . urlencode($disciplina) . '&salvo=' . $salvos);
+    } catch (InvalidArgumentException $e) {
+        header('Location: diarioClasse.php?disciplina=' . urlencode($disciplina) . '&erro=' . urlencode($e->getMessage()));
+    }
+    exit;
+}
+
+$alunos = $conn->prepare(
+    'SELECT u.id, u.usuario, u.email, b.nota_b1, b.nota_b2, b.nota_b3, b.nota_b4, b.frequencia
+     FROM usuarios u
+     LEFT JOIN boletim b ON b.usuario_id = u.id AND b.disciplina = ?
+     WHERE u.nivel = "Aluno" ORDER BY u.usuario'
+);
+$alunos->bind_param('s', $disciplina);
+$alunos->execute();
+$lista = $alunos->get_result()->fetch_all(MYSQLI_ASSOC);
+$alunos->close();
+
+$msgOk = isset($_GET['salvo']) ? ((int) $_GET['salvo'] > 0 ? ((int) $_GET['salvo'] . ' lançamento(s) salvo(s) com sucesso!') : 'Nada foi alterado: preencha ao menos uma nota ou frequência.') : null;
+$msgErro = $_GET['erro'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- CSS -->
-    <link rel="stylesheet" href="./css/app.css?v=<?= $cacheVersion ?>">
-    <title>Diário de Classe & Notas - Cadastro Web</title>
-</head>
-
+<head><?= layout_head('Diário de Classe') ?></head>
 <body>
-    <!-- Top Navigation Bar -->
-    <nav class="app-navbar">
-        <a href="home.php" class="nav-brand">
-            <div class="nav-brand-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <span>Cadastro Web</span>
-        </a>
-
-        <div class="nav-user-area">
-            <div class="user-badge-pill">
-                <span class="user-avatar-sm"><?= escape_html($primeiraLetra) ?></span>
-                <strong><?= escape_html($usuarioNome) ?></strong>
-                <span class="role-pill role-<?= strtolower($usuarioNivel) ?>">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    <?= escape_html($usuarioNivel) ?>
-                </span>
-            </div>
-
-            <form action="logout.php" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
-                <button type="submit" class="btn btn-secondary btn-sm" title="Encerrar sessão">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Sair</span>
-                </button>
-            </form>
-        </div>
-    </nav>
+    <?= layout_navbar('diarioClasse.php') ?>
 
     <div class="dashboard-container">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb-bar">
+        <div class="breadcrumb-bar no-print">
             <a href="home.php"><i class="fa-solid fa-house"></i> Início</a>
             <span class="breadcrumb-separator"><i class="fa-solid fa-chevron-right"></i></span>
-            <span>Diário de Classe & Lançamento de Notas</span>
+            <span>Diário de Classe</span>
         </div>
+
+        <?= layout_alert($msgOk, 'success') ?>
+        <?= layout_alert($msgErro, 'danger') ?>
 
         <div class="table-card">
             <div class="table-header-bar">
                 <div class="table-title">
-                    <h2><i class="fa-solid fa-chalkboard" style="color: #38bdf8; margin-right: 8px;"></i> Diário de Classe: Matemática - Turma 3º Ano A</h2>
-                    <span>Docente responsável: <strong><?= escape_html($usuarioNome) ?></strong> • Ano Letivo 2026</span>
+                    <h2><i class="fa-solid fa-chalkboard" style="color:#38bdf8;margin-right:8px;"></i> Diário de Classe</h2>
+                    <span>Lance notas dos 4 bimestres e a frequência. Média e situação são calculadas automaticamente.</span>
                 </div>
 
-                <div class="table-actions">
-                    <a href="home.php" class="btn btn-secondary btn-sm">
-                        <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
-                    </a>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="alert('Notas consolidadas com sucesso!')" style="margin-top:0;">
-                        <i class="fa-solid fa-floppy-disk"></i> Salvar Lançamentos
-                    </button>
-                </div>
+                <form method="get" action="diarioClasse.php" class="table-actions">
+                    <label for="disciplina" class="form-label" style="margin:0;">Disciplina</label>
+                    <select id="disciplina" name="disciplina" class="select-inline" onchange="this.form.submit()">
+                        <?php foreach (DISCIPLINAS as $d): ?>
+                            <option value="<?= escape_html($d) ?>" <?= $d === $disciplina ? 'selected' : '' ?>><?= escape_html($d) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
             </div>
 
-            <div class="modern-table-responsive">
-                <table class="modern-table">
-                    <thead>
-                        <tr>
-                            <th><i class="fa-solid fa-user-graduate"></i> Estudante</th>
-                            <th><i class="fa-solid fa-envelope"></i> E-mail</th>
-                            <th style="text-align: center;">1º Bim</th>
-                            <th style="text-align: center;">2º Bim</th>
-                            <th style="text-align: center;">3º Bim</th>
-                            <th style="text-align: center;">4º Bim</th>
-                            <th style="text-align: center;">Média</th>
-                            <th style="text-align: right;">Frequência</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php if ($alunosRes && $alunosRes->num_rows > 0): ?>
-                        <?php while ($aluno = $alunosRes->fetch_assoc()): ?>
-                            <?php $media = round(($aluno['nota_b1'] + $aluno['nota_b2'] + $aluno['nota_b3'] + $aluno['nota_b4']) / 4, 1); ?>
+            <?php if (!$lista): ?>
+                <div class="empty-state">
+                    <i class="fa-regular fa-folder-open"></i>
+                    <p>Nenhum aluno cadastrado ainda. Cadastre alunos para lançar notas.</p>
+                </div>
+            <?php else: ?>
+            <form method="post" action="diarioClasse.php" id="form-diario">
+                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
+                <input type="hidden" name="disciplina" value="<?= escape_html($disciplina) ?>">
+
+                <div class="modern-table-responsive">
+                    <table class="modern-table">
+                        <thead>
                             <tr>
-                                <td><strong><?= escape_html($aluno['usuario']) ?></strong></td>
-                                <td style="color: var(--text-muted);"><?= escape_html($aluno['email']) ?></td>
-                                <td style="text-align: center;"><?= number_format($aluno['nota_b1'], 1, ',', '.') ?></td>
-                                <td style="text-align: center;"><?= number_format($aluno['nota_b2'], 1, ',', '.') ?></td>
-                                <td style="text-align: center;"><?= number_format($aluno['nota_b3'], 1, ',', '.') ?></td>
-                                <td style="text-align: center;"><?= number_format($aluno['nota_b4'], 1, ',', '.') ?></td>
-                                <td style="text-align: center;">
-                                    <strong style="color: #38bdf8;"><?= number_format($media, 1, ',', '.') ?></strong>
-                                </td>
-                                <td style="text-align: right;">
-                                    <span class="role-pill role-aluno">
-                                        <?= (int) $aluno['frequencia'] ?>%
-                                    </span>
-                                </td>
+                                <th>Estudante</th>
+                                <th style="text-align:center;">1º Bim</th>
+                                <th style="text-align:center;">2º Bim</th>
+                                <th style="text-align:center;">3º Bim</th>
+                                <th style="text-align:center;">4º Bim</th>
+                                <th style="text-align:center;">Freq. %</th>
+                                <th style="text-align:center;">Média</th>
+                                <th style="text-align:right;">Situação</th>
                             </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                                Nenhum estudante matriculado nesta turma até o momento.
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($lista as $a): $id = (int) $a['id']; ?>
+                            <tr class="linha-aluno">
+                                <td>
+                                    <strong><?= escape_html($a['usuario']) ?></strong><br>
+                                    <small style="color:var(--text-muted);"><?= escape_html($a['email']) ?></small>
+                                </td>
+                                <?php foreach (['b1' => 'nota_b1', 'b2' => 'nota_b2', 'b3' => 'nota_b3', 'b4' => 'nota_b4'] as $k => $col): ?>
+                                    <td style="text-align:center;">
+                                        <input class="nota-input" type="number" step="0.1" min="0" max="10" inputmode="decimal"
+                                               name="aluno[<?= $id ?>][<?= $k ?>]" data-nota
+                                               value="<?= $a[$col] !== null ? escape_html(number_format((float) $a[$col], 1, '.', '')) : '' ?>"
+                                               aria-label="Nota <?= $k ?> de <?= escape_html($a['usuario']) ?>">
+                                    </td>
+                                <?php endforeach; ?>
+                                <td style="text-align:center;">
+                                    <input class="nota-input" type="number" step="1" min="0" max="100" inputmode="numeric"
+                                           name="aluno[<?= $id ?>][freq]" data-freq
+                                           value="<?= $a['frequencia'] !== null ? (int) $a['frequencia'] : '' ?>"
+                                           aria-label="Frequência de <?= escape_html($a['usuario']) ?>">
+                                </td>
+                                <td style="text-align:center;"><strong class="media-cell" style="color:#38bdf8;">–</strong></td>
+                                <td style="text-align:right;"><span class="situacao-cell role-pill">–</span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-actions-row" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+                    <div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFreq100()">
+                            <i class="fa-solid fa-check-double"></i> Frequência 100% para Todos
+                        </button>
+                    </div>
+                    <div style="display:flex;gap:0.75rem;align-items:center;">
+                        <a href="turmas.php" class="btn btn-secondary" style="flex:none;"><i class="fa-solid fa-users-rectangle"></i> Ver Turmas</a>
+                        <button type="submit" class="btn btn-primary" style="flex:none;width:auto;margin-top:0;">
+                            <i class="fa-solid fa-floppy-disk"></i> Salvar Lançamentos
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <?php endif; ?>
         </div>
     </div>
+
+    <script src="./js/index.js?v=<?= time() ?>"></script>
+    <script>
+        // Cálculo ao vivo de média e situação enquanto o professor digita
+        document.querySelectorAll('.linha-aluno').forEach(function (row) {
+            function recalc() {
+                var vals = Array.from(row.querySelectorAll('[data-nota]')).map(function (i) { return parseFloat(i.value) || 0; });
+                var algum = Array.from(row.querySelectorAll('[data-nota]')).some(function (i) { return i.value !== ''; });
+                var freqEl = row.querySelector('[data-freq]');
+                var freq = freqEl.value === '' ? 100 : parseInt(freqEl.value, 10);
+                var media = vals.reduce(function (a, b) { return a + b; }, 0) / 4;
+                var mediaEl = row.querySelector('.media-cell');
+                var sitEl = row.querySelector('.situacao-cell');
+                if (!algum) { mediaEl.textContent = '–'; sitEl.textContent = '–'; sitEl.className = 'situacao-cell role-pill'; return; }
+                mediaEl.textContent = media.toFixed(1).replace('.', ',');
+                var txt, cls;
+                if (freq < 75) { txt = 'Reprovado por falta'; cls = 'role-danger'; }
+                else if (media >= 6) { txt = 'Aprovado'; cls = 'role-aluno'; }
+                else { txt = 'Em recuperação'; cls = 'role-prof'; }
+                sitEl.textContent = txt;
+                sitEl.className = 'situacao-cell role-pill ' + cls;
+            }
+            row.querySelectorAll('input').forEach(function (i) { i.addEventListener('input', recalc); });
+            recalc();
+        });
+
+        function preencherFreq100() {
+            document.querySelectorAll('[data-freq]').forEach(function(inp) {
+                if (!inp.value || inp.value === '' || inp.value === '0') {
+                    inp.value = '100';
+                    inp.dispatchEvent(new Event('input'));
+                }
+            });
+        }
+    </script>
 </body>
-
 </html>
-

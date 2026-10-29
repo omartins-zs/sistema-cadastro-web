@@ -217,3 +217,20 @@ function doc_enviar_pdf(string $articleHtml, string $titulo, string $nomeArquivo
     $dompdf->stream($nomeArquivo, ['Attachment' => true]);
     exit;
 }
+
+const DISCIPLINAS = [
+    'Matemática',
+    'Língua Portuguesa',
+    'História',
+    'Geografia',
+    'Ciências Naturais',
+    'Língua Inglesa',
+];
+
+function calc_situacao(float $media, int $frequencia): string
+{
+    if ($frequencia < 75) {
+        return 'Reprovado por falta';
+    }
+    return $media >= 6.0 ? 'Aprovado' : 'Em recuperação';
+}

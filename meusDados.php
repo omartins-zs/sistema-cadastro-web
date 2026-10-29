@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/layout.php';
 require_login();
 require_once __DIR__ . '/conexao.php';
 
@@ -71,39 +72,7 @@ $primeiraLetra = strtoupper(mb_substr($usuarioNome, 0, 1, 'UTF-8'));
 
 <body>
     <!-- Top Navigation Bar -->
-    <nav class="app-navbar">
-        <a href="home.php" class="nav-brand">
-            <div class="nav-brand-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <span>Cadastro Web</span>
-        </a>
-
-        <div class="nav-user-area">
-            <div class="user-badge-pill">
-                <span class="user-avatar-sm"><?= escape_html($primeiraLetra) ?></span>
-                <strong><?= escape_html($usuarioNome) ?></strong>
-                <span class="role-pill role-<?= strtolower($usuarioNivel) ?>">
-                    <?php if ($usuarioNivel === 'Admin'): ?>
-                        <i class="fa-solid fa-shield-halved"></i>
-                    <?php elseif ($usuarioNivel === 'Prof'): ?>
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                    <?php else: ?>
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    <?php endif; ?>
-                    <?= escape_html($usuarioNivel) ?>
-                </span>
-            </div>
-
-            <form action="logout.php" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
-                <button type="submit" class="btn btn-secondary btn-sm" title="Encerrar sessão">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Sair</span>
-                </button>
-            </form>
-        </div>
-    </nav>
+    <?= layout_navbar('meusDados.php') ?>
 
     <div class="dashboard-container">
         <!-- Breadcrumb -->

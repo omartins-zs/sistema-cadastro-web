@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/layout.php';
 require_login();
 require_once __DIR__ . '/conexao.php';
 require_once __DIR__ . '/documentos.php';
@@ -85,29 +86,7 @@ $stmt->close();
 </head>
 
 <body>
-    <nav class="app-navbar no-print">
-        <a href="home.php" class="nav-brand">
-            <div class="nav-brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-            <span>Cadastro Web</span>
-        </a>
-
-        <div class="nav-user-area">
-            <div class="user-badge-pill">
-                <span class="user-avatar-sm"><?= escape_html($primeiraLetra) ?></span>
-                <strong><?= escape_html($usuarioNome) ?></strong>
-                <span class="role-pill role-<?= strtolower($usuarioNivel) ?>">
-                    <i class="fa-solid fa-graduation-cap"></i> <?= escape_html($usuarioNivel) ?>
-                </span>
-            </div>
-
-            <form action="logout.php" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
-                <button type="submit" class="btn btn-secondary btn-sm" title="Encerrar sessão">
-                    <i class="fa-solid fa-right-from-bracket"></i> <span>Sair</span>
-                </button>
-            </form>
-        </div>
-    </nav>
+    <?= layout_navbar('secretaria.php') ?>
 
     <div class="dashboard-container">
         <div class="breadcrumb-bar no-print">
@@ -198,13 +177,15 @@ $stmt->close();
                                     <td><strong style="color: #38bdf8;"><?= escape_html($row['protocolo']) ?></strong></td>
                                     <td><?= escape_html($row['tipo_documento']) ?></td>
                                     <td style="color: var(--text-muted);"><?= escape_html($row['data_fmt']) ?></td>
-                                    <td style="text-align: right; white-space: nowrap;">
-                                        <a class="btn btn-secondary btn-sm" href="secretaria.php?ver=<?= (int) $row['id'] ?>">
-                                            <i class="fa-solid fa-eye"></i> Visualizar
-                                        </a>
-                                        <a class="btn btn-primary btn-sm" style="width:auto;margin-top:0;" href="baixar.php?doc=<?= (int) $row['id'] ?>">
-                                            <i class="fa-solid fa-file-arrow-down"></i> Baixar PDF
-                                        </a>
+                                    <td style="text-align: right;">
+                                        <div class="table-actions-cell">
+                                            <a class="btn btn-secondary btn-sm" href="secretaria.php?ver=<?= (int) $row['id'] ?>">
+                                                <i class="fa-solid fa-eye"></i> Visualizar
+                                            </a>
+                                            <a class="btn btn-primary btn-sm" style="width:auto;margin-top:0;" href="baixar.php?doc=<?= (int) $row['id'] ?>">
+                                                <i class="fa-solid fa-file-arrow-down"></i> Baixar PDF
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -221,6 +202,7 @@ $stmt->close();
             </div>
         <?php endif; ?>
     </div>
+    <script src="./js/index.js?v=<?= time() ?>"></script>
 </body>
 
 </html>

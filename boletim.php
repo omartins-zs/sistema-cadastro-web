@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/layout.php';
 require_login();
 require_once __DIR__ . '/conexao.php';
 require_once __DIR__ . '/documentos.php';
@@ -43,6 +44,16 @@ $boletimImpressao = render_boletim_impressao(
     ['id' => $usuarioId, 'nome' => $usuarioNome, 'email' => (string) $usuarioEmail],
     doc_notas($conn, $usuarioId)
 );
+
+// Comunicados oficiais publicados no sistema
+$comunicadosQuery = $conn->query(
+    'SELECT c.id, c.titulo, c.mensagem, u.usuario AS autor, u.nivel, DATE_FORMAT(c.criado_em, "%d/%m/%Y %H:%i") AS data_fmt
+     FROM comunicados c
+     JOIN usuarios u ON u.id = c.autor_id
+     ORDER BY c.id DESC
+     LIMIT 5'
+);
+$comunicados = $comunicadosQuery ? $comunicadosQuery->fetch_all(MYSQLI_ASSOC) : [];
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -64,35 +75,9 @@ $boletimImpressao = render_boletim_impressao(
 
 <body>
     <!-- Top Navigation Bar -->
-    <nav class="app-navbar">
-        <a href="home.php" class="nav-brand">
-            <div class="nav-brand-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <span>Cadastro Web</span>
-        </a>
+    <?= layout_navbar('boletim.php') ?>
 
-        <div class="nav-user-area">
-            <div class="user-badge-pill">
-                <span class="user-avatar-sm"><?= escape_html($primeiraLetra) ?></span>
-                <strong><?= escape_html($usuarioNome) ?></strong>
-                <span class="role-pill role-<?= strtolower($usuarioNivel) ?>">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    <?= escape_html($usuarioNivel) ?>
-                </span>
-            </div>
-
-            <form action="logout.php" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
-                <button type="submit" class="btn btn-secondary btn-sm" title="Encerrar sessão">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Sair</span>
-                </button>
-            </form>
-        </div>
-    </nav>
-
-    <div class="dashboard-container">
+    <div class="dashboard-container no-print">
         <!-- Breadcrumb -->
         <div class="breadcrumb-bar">
             <a href="home.php"><i class="fa-solid fa-house"></i> Início</a>
@@ -216,31 +201,33 @@ $boletimImpressao = render_boletim_impressao(
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1.25rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                        <strong style="color: #38bdf8;"><i class="fa-solid fa-chalkboard-user"></i> Prof. Carlos (Matemática)</strong>
-                        <small style="color: var(--text-muted);">Ontem às 14:30</small>
-                    </div>
-                    <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0;">
-                        Parabéns pelo ótimo desempenho nas avaliações do 4º bimestre! O trabalho final com resolução de problemas já está disponível para consulta na sala de aula.
+                <?php if (!empty($comunicados)): ?>
+                    <?php foreach ($comunicados as $com): ?>
+                        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+                                <strong style="color: #38bdf8;">
+                                    <i class="fa-solid <?= $com['nivel'] === 'Prof' ? 'fa-chalkboard-user' : 'fa-shield-halved' ?>"></i> 
+                                    <?= escape_html($com['autor']) ?> (<?= escape_html($com['nivel']) ?>) - <?= escape_html($com['titulo']) ?>
+                                </strong>
+                                <small style="color: var(--text-muted);"><?= escape_html($com['data_fmt']) ?></small>
+                            </div>
+                            <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0; line-height: 1.55;">
+                                <?= nl2br(escape_html($com['mensagem'])) ?>
+                            </p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; padding: 1rem; text-align: center;">
+                        Nenhum comunicado recente publicado pelos professores no momento.
                     </p>
-                </div>
-
-                <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 1.25rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                        <strong style="color: #a855f7;"><i class="fa-solid fa-school"></i> Coordenação Pedagógica</strong>
-                        <small style="color: var(--text-muted);">28/10/2026</small>
-                    </div>
-                    <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0;">
-                        Lembramos que o período de renovação de matrículas para o próximo semestre letivo estará aberto a partir da próxima semana através da Secretaria Virtual.
-                    </p>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <!-- Versão para impressão: apenas o boletim, sem menus ou botões -->
     <div class="print-only"><?= $boletimImpressao ?></div>
+    <script src="./js/index.js?v=<?= time() ?>"></script>
 </body>
 
 </html>

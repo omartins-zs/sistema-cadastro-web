@@ -363,6 +363,64 @@ run_test("Aluno é BLOQUEADO ao tentar acessar relatorioUsuario.php (HTTP 403)",
     return true;
 });
 
+run_test("Aluno acessa portal financeiro com grade de mensalidades e status Nada Consta", function() use ($baseUrl, $cookieAluno) {
+    $res = http_req("{$baseUrl}/financeiro.php", 'GET', [], $cookieAluno);
+    if ($res['status'] !== 200) return "Esperava HTTP 200, recebeu {$res['status']}";
+    if (!str_contains($res['body'], 'Grade de Mensalidades')) return "Grade de mensalidades ausente";
+    if (!str_contains($res['body'], 'Nada Consta')) return "Menção ao Nada Consta ausente";
+    if (!str_contains($res['body'], 'PIX')) return "Integração PIX ausente";
+    return true;
+});
+
+run_test("Aluno simula pagamento instantâneo via PIX no financeiro", function() use ($baseUrl, $cookieAluno) {
+    $page = http_req("{$baseUrl}/financeiro.php", 'GET', [], $cookieAluno);
+    preg_match('/name="csrf_token"\s+value="([^"]+)"/', $page['body'], $m);
+    $csrf = $m[1] ?? '';
+    preg_match('/abrirPix\((\d+)/', $page['body'], $mPix);
+    $mensalidadeId = $mPix[1] ?? '11';
+
+    $post = http_req("{$baseUrl}/financeiro.php", 'POST', [
+        'csrf_token' => $csrf,
+        'acao' => 'pagar_mensalidade',
+        'mensalidade_id' => $mensalidadeId
+    ], $cookieAluno);
+
+    if ($post['status'] !== 302 || !str_contains($post['headers'], 'pago=1')) {
+        return "Pagamento PIX não redirecionou com confirmação de sucesso";
+    }
+    return true;
+});
+
+run_test("Aluno emite Nada Consta com 1 clique a partir do financeiro", function() use ($baseUrl, $cookieAluno) {
+    $page = http_req("{$baseUrl}/financeiro.php", 'GET', [], $cookieAluno);
+    preg_match('/name="csrf_token"\s+value="([^"]+)"/', $page['body'], $m);
+    $csrf = $m[1] ?? '';
+
+    $post = http_req("{$baseUrl}/financeiro.php", 'POST', [
+        'csrf_token' => $csrf,
+        'acao' => 'emitir_nada_consta'
+    ], $cookieAluno);
+
+    if ($post['status'] !== 302 || !str_contains($post['headers'], 'secretaria.php?ver=')) {
+        return "Emissão de Nada Consta não redirecionou para visualização do documento";
+    }
+    return true;
+});
+
+run_test("Professor acessa turmas com estatísticas e alunos matriculados", function() use ($baseUrl, $cookieProf) {
+    $res = http_req("{$baseUrl}/turmas.php", 'GET', [], $cookieProf);
+    if ($res['status'] !== 200) return "Esperava HTTP 200, recebeu {$res['status']}";
+    if (!str_contains($res['body'], 'Turma 3º Ano A')) return "Turmas não listadas";
+    if (!str_contains($res['body'], 'Lançar Notas')) return "Botão de lançamento de notas ausente";
+    return true;
+});
+
+run_test("Aluno é BLOQUEADO ao tentar acessar turmas.php (HTTP 403)", function() use ($baseUrl, $cookieAluno) {
+    $res = http_req("{$baseUrl}/turmas.php", 'GET', [], $cookieAluno);
+    if ($res['status'] !== 403) return "Esperava 403 Forbidden, recebeu {$res['status']}";
+    return true;
+});
+
 // Limpeza de cookies de teste
 @unlink($cookieAdmin);
 @unlink($cookieProf);

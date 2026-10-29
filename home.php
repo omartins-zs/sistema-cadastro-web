@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/layout.php';
 require_login();
 require_once __DIR__ . '/conexao.php';
 
@@ -17,6 +18,45 @@ if ($usuarioNivel === 'Admin' && isset($conn)) {
     }
 }
 
+
+// Métricas reais por perfil
+$statAlunos = $statLancamentos = $statComunicados = $statDocs = 0;
+$statMedia = '–'; $statFreq = 0;
+if (isset($conn)) {
+    if ($usuarioNivel === 'Prof' || $usuarioNivel === 'Admin') {
+        $statAlunos = (int) $conn->query("SELECT COUNT(*) FROM usuarios WHERE nivel = 'Aluno'")->fetch_row()[0];
+        $statLancamentos = (int) $conn->query('SELECT COUNT(*) FROM boletim')->fetch_row()[0];
+        $statComunicados = (int) $conn->query('SELECT COUNT(*) FROM comunicados')->fetch_row()[0];
+    } else {
+        $uid = (int) ($_SESSION['user_id'] ?? 0);
+        $q = $conn->prepare('SELECT AVG((nota_b1 + nota_b2 + nota_b3 + nota_b4) / 4), AVG(frequencia) FROM boletim WHERE usuario_id = ?');
+        $q->bind_param('i', $uid);
+        $q->execute();
+        $q->bind_result($mediaDb, $freqDb);
+        $q->fetch();
+        $q->close();
+        $statMedia = $mediaDb !== null ? number_format((float) $mediaDb, 1, ',', '.') : '–';
+        $statFreq = $freqDb !== null ? (int) round($freqDb) : 0;
+        $q = $conn->prepare('SELECT COUNT(*) FROM solicitacoes_secretaria WHERE usuario_id = ?');
+        $q->bind_param('i', $uid);
+        $q->execute();
+        $q->bind_result($statDocs);
+        $q->fetch();
+        $q->close();
+
+        $statFinStatus = 'Em Dia';
+        $qFin = $conn->prepare("SELECT COUNT(*) FROM mensalidades WHERE usuario_id = ? AND status = 'Pendente'");
+        if ($qFin) {
+            $qFin->bind_param('i', $uid);
+            $qFin->execute();
+            $qFin->bind_result($pendCount);
+            if ($qFin->fetch() && $pendCount > 2) {
+                $statFinStatus = $pendCount . ' Pendentes';
+            }
+            $qFin->close();
+        }
+    }
+}
 $msgSucesso = null;
 if (($_GET['cadastrado'] ?? '') === '1') {
     $msgSucesso = 'Novo usuário cadastrado com sucesso!';
@@ -43,39 +83,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
 
 <body>
     <!-- Top Navigation Bar -->
-    <nav class="app-navbar">
-        <a href="home.php" class="nav-brand">
-            <div class="nav-brand-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <span>Cadastro Web</span>
-        </a>
-
-        <div class="nav-user-area">
-            <div class="user-badge-pill">
-                <span class="user-avatar-sm"><?= escape_html($primeiraLetra) ?></span>
-                <strong><?= escape_html($usuarioNome) ?></strong>
-                <span class="role-pill role-<?= strtolower($usuarioNivel) ?>">
-                    <?php if ($usuarioNivel === 'Admin'): ?>
-                        <i class="fa-solid fa-shield-halved"></i>
-                    <?php elseif ($usuarioNivel === 'Prof'): ?>
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                    <?php else: ?>
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    <?php endif; ?>
-                    <?= escape_html($usuarioNivel) ?>
-                </span>
-            </div>
-
-            <form action="logout.php" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
-                <button type="submit" class="btn btn-secondary btn-sm" title="Encerrar sessão">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Sair</span>
-                </button>
-            </form>
-        </div>
-    </nav>
+    <?= layout_navbar('home.php') ?>
 
     <!-- Dashboard Content -->
     <div class="dashboard-container">
@@ -139,8 +147,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                         <i class="fa-solid fa-chalkboard-user"></i>
                     </div>
                     <div class="stat-info">
-                        <h4>Docente</h4>
-                        <span>Perfil Professor</span>
+                        <h4><?= $statAlunos ?></h4><span>Alunos matriculados</span>
                     </div>
                 </div>
 
@@ -149,8 +156,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                         <i class="fa-solid fa-book-open"></i>
                     </div>
                     <div class="stat-info">
-                        <h4>Semestre 2026.1</h4>
-                        <span>Período Letivo Vigente</span>
+                        <h4><?= $statLancamentos ?></h4><span>Lançamentos de notas</span>
                     </div>
                 </div>
 
@@ -159,8 +165,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                         <i class="fa-solid fa-clipboard-check"></i>
                     </div>
                     <div class="stat-info">
-                        <h4>Autorizado</h4>
-                        <span>Lançamento de Aulas</span>
+                        <h4><?= $statComunicados ?></h4><span>Comunicados publicados</span>
                     </div>
                 </div>
 
@@ -170,8 +175,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
                     <div class="stat-info">
-                        <h4>Estudante</h4>
-                        <span>Perfil Aluno</span>
+                        <h4><?= $statMedia ?></h4><span>Média geral</span>
                     </div>
                 </div>
 
@@ -180,8 +184,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                         <i class="fa-solid fa-id-card"></i>
                     </div>
                     <div class="stat-info">
-                        <h4>Matriculado</h4>
-                        <span>Situação Regular</span>
+                        <h4><?= $statFreq ?>%</h4><span>Frequência média</span>
                     </div>
                 </div>
 
@@ -190,8 +193,16 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                     <div class="stat-info">
-                        <h4>Ativo</h4>
-                        <span>Acesso ao Portal</span>
+                        <h4><?= $statDocs ?></h4><span>Documentos emitidos</span>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon dash-icon-emerald">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4><?= escape_html($statFinStatus ?? 'Em Dia') ?></h4><span>Financeiro</span>
                     </div>
                 </div>
             <?php endif; ?>
@@ -261,6 +272,18 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                     </div>
                 </a>
 
+                <a href="comunicados.php" class="dash-card">
+                    <div class="dash-icon-box dash-icon-blue" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <h3>Quadro de Comunicados</h3>
+                    <p>Publique orientações pedagógicas, avisos de provas e mensagens oficiais para os estudantes.</p>
+                    <div class="dash-card-arrow">
+                        <span>Gerenciar Avisos</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </a>
+
                 <a href="meusDados.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-purple">
                         <i class="fa-solid fa-address-card"></i>
@@ -298,6 +321,18 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                     </div>
                 </a>
 
+                <a href="financeiro.php" class="dash-card">
+                    <div class="dash-icon-box dash-icon-blue" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8;">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <h3>Financeiro & Mensalidades</h3>
+                    <p>Consulte parcelas pagas, gere código PIX para liquidação e emita sua Declaração de Nada Consta.</p>
+                    <div class="dash-card-arrow">
+                        <span>Acessar Financeiro</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </a>
+
                 <a href="meusDados.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-purple">
                         <i class="fa-solid fa-circle-user"></i>
@@ -312,6 +347,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
             <?php endif; ?>
         </div>
     </div>
+    <script src="./js/index.js?v=<?= time() ?>"></script>
 </body>
 
 </html>

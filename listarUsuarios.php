@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/layout.php';
 require_admin();
 require_once __DIR__ . '/conexao.php';
 
@@ -40,32 +41,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
 
 <body>
     <!-- Top Navigation Bar -->
-    <nav class="app-navbar">
-        <a href="home.php" class="nav-brand">
-            <div class="nav-brand-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <span>Cadastro Web</span>
-        </a>
-
-        <div class="nav-user-area">
-            <div class="user-badge-pill">
-                <span class="user-avatar-sm"><?= escape_html($primeiraLetra) ?></span>
-                <strong><?= escape_html($usuarioNome) ?></strong>
-                <span class="role-pill role-<?= strtolower($usuarioNivel) ?>">
-                    <?= escape_html($usuarioNivel) ?>
-                </span>
-            </div>
-
-            <form action="logout.php" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="<?= escape_html(csrf_token()) ?>">
-                <button type="submit" class="btn btn-secondary btn-sm" title="Encerrar sessão">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Sair</span>
-                </button>
-            </form>
-        </div>
-    </nav>
+    <?= layout_navbar('listarUsuarios.php') ?>
 
     <div class="dashboard-container">
         <!-- Breadcrumb -->
@@ -145,7 +121,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                                    <div class="table-actions-cell">
                                         <a class="btn btn-secondary btn-sm" href="editar.php?codigo=<?= (int) $usuario['id'] ?>" title="Editar usuário">
                                             <i class="fa-solid fa-pen-to-square"></i> Editar
                                         </a>
@@ -217,6 +193,7 @@ if (($_GET['cadastrado'] ?? '') === '1') {
             }
         }
     </script>
+    <script src="./js/index.js?v=<?= time() ?>"></script>
 </body>
 
 </html>
