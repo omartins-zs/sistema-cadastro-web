@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_login();
 require_once __DIR__ . '/conexao.php';
+require_once __DIR__ . '/documentos.php';
 
 $usuarioId = (int) ($_SESSION['user_id'] ?? 0);
 $usuarioNome = $_SESSION['usuario'] ?? 'Aluno';
@@ -30,6 +31,18 @@ $stmt->close();
 $totalDisciplinas = count($notas);
 $mediaGeral = $totalDisciplinas > 0 ? round($somaMedias / $totalDisciplinas, 1) : 0.0;
 $frequenciaGeral = $totalDisciplinas > 0 ? round($somaFreq / $totalDisciplinas) : 100;
+
+// Dados para o documento impresso (somente o boletim)
+$stmt = $conn->prepare('SELECT email FROM usuarios WHERE id = ?');
+$stmt->bind_param('i', $usuarioId);
+$stmt->execute();
+$stmt->bind_result($usuarioEmail);
+$stmt->fetch();
+$stmt->close();
+$boletimImpressao = render_boletim_impressao(
+    ['id' => $usuarioId, 'nome' => $usuarioNome, 'email' => (string) $usuarioEmail],
+    doc_notas($conn, $usuarioId)
+);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -222,6 +235,10 @@ $frequenciaGeral = $totalDisciplinas > 0 ? round($somaFreq / $totalDisciplinas) 
             </div>
         </div>
     </div>
+
+    <!-- Versão para impressão: apenas o boletim, sem menus ou botões -->
+    <div class="print-only"><?= $boletimImpressao ?></div>
 </body>
 
 </html>
+

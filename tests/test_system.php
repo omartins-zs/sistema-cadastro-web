@@ -283,6 +283,45 @@ run_test("Aluno acessa Meus Dados Cadastrais (meusDados.php)", function() use ($
     return true;
 });
 
+run_test("Boletim contém versão de impressão exclusiva (print-only)", function() use ($baseUrl, $cookieAluno) {
+    $res = http_req("{$baseUrl}/boletim.php", 'GET', [], $cookieAluno);
+    if (!str_contains($res['body'], 'class="print-only"') || !str_contains($res['body'], 'doc-paper')) {
+        return "Bloco de impressão do boletim não encontrado";
+    }
+    return true;
+});
+
+$documentosEsperados = [
+    'Declaração de Matrícula Regular'       => 'regularmente matriculado',
+    'Atestado de Frequência Escolar'        => 'frequenta regularmente',
+    'Histórico Escolar Parcial'             => 'Histórico escolar parcial',
+    'Declaração de Quitação e Nada Consta'  => 'não constam pendências',
+];
+foreach ($documentosEsperados as $tipoDoc => $trecho) {
+    run_test("Secretaria emite e exibe: {$tipoDoc}", function() use ($baseUrl, $cookieAluno, $tipoDoc, $trecho) {
+        $page = http_req("{$baseUrl}/secretaria.php", 'GET', [], $cookieAluno);
+        preg_match('/name="csrf_token"\s+value="([^"]+)"/', $page['body'], $m);
+        $post = http_req("{$baseUrl}/secretaria.php", 'POST', [
+            'csrf_token' => $m[1] ?? '',
+            'tipo_documento' => $tipoDoc,
+        ], $cookieAluno);
+        if ($post['status'] !== 302 || !preg_match('/Location: secretaria\.php\?ver=(\d+)/', $post['headers'], $loc)) {
+            return "Emissão não redirecionou para o documento";
+        }
+        $doc = http_req("{$baseUrl}/secretaria.php?ver={$loc[1]}", 'GET', [], $cookieAluno);
+        if ($doc['status'] !== 200 || !str_contains($doc['body'], 'doc-paper')) return "Documento não renderizado";
+        if (!str_contains($doc['body'], $tipoDoc) || !str_contains($doc['body'], $trecho)) return "Conteúdo do documento incorreto";
+        if (!str_contains($doc['body'], 'AlunoLucas') || !str_contains($doc['body'], 'Chave de autenticidade')) return "Dados do aluno/chave ausentes";
+        return true;
+    });
+}
+
+run_test("Documento da secretaria de outro usuário não é exibido", function() use ($baseUrl, $cookieProf) {
+    $res = http_req("{$baseUrl}/secretaria.php?ver=1", 'GET', [], $cookieProf);
+    if (str_contains($res['body'], 'doc-paper')) return "Vazou documento de outro usuário";
+    return true;
+});
+
 run_test("Aluno é BLOQUEADO ao tentar acessar diário de classe (HTTP 403)", function() use ($baseUrl, $cookieAluno) {
     $res = http_req("{$baseUrl}/diarioClasse.php", 'GET', [], $cookieAluno);
     if ($res['status'] !== 403) return "Esperava 403 Forbidden, recebeu {$res['status']}";
