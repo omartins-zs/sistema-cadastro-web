@@ -11,6 +11,31 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
     UNIQUE (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `boletim` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `usuario_id` INT NOT NULL,
+    `disciplina` VARCHAR(100) NOT NULL,
+    `nota_b1` DECIMAL(4,1) DEFAULT 0.0,
+    `nota_b2` DECIMAL(4,1) DEFAULT 0.0,
+    `nota_b3` DECIMAL(4,1) DEFAULT 0.0,
+    `nota_b4` DECIMAL(4,1) DEFAULT 0.0,
+    `frequencia` INT DEFAULT 100,
+    `status` VARCHAR(50) DEFAULT 'Em Curso',
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `solicitacoes_secretaria` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `usuario_id` INT NOT NULL,
+    `tipo_documento` VARCHAR(150) NOT NULL,
+    `protocolo` VARCHAR(50) NOT NULL,
+    `status` VARCHAR(50) NOT NULL,
+    `data_solicitacao` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT IGNORE INTO `usuarios` (`usuario`, `senha`, `email`, `nivel`)
 VALUES 
     ('Alberto', '123', 'alberto@email.com', 'Admin'),

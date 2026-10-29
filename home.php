@@ -237,78 +237,78 @@ if (($_GET['cadastrado'] ?? '') === '1') {
                 </a>
 
             <?php elseif ($usuarioNivel === 'Prof'): ?>
-                <div class="dash-card">
+                <a href="diarioClasse.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-blue">
                         <i class="fa-solid fa-chalkboard"></i>
                     </div>
                     <h3>Diário de Classe & Notas</h3>
                     <p>Área destinada ao lançamento de notas bimestrais, frequências de alunos e planos de aula.</p>
                     <div class="dash-card-arrow">
-                        <span>Módulo Docente</span>
-                        <i class="fa-solid fa-check"></i>
+                        <span>Acessar Diário</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                </div>
+                </a>
 
-                <div class="dash-card">
+                <a href="turmas.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-emerald">
                         <i class="fa-solid fa-users-rectangle"></i>
                     </div>
                     <h3>Turmas Atribuídas</h3>
                     <p>Acompanhe os estudantes matriculados nas disciplinas sob sua responsabilidade acadêmica.</p>
                     <div class="dash-card-arrow">
-                        <span>Módulo Docente</span>
-                        <i class="fa-solid fa-check"></i>
+                        <span>Ver Turmas</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                </div>
+                </a>
 
-                <div class="dash-card">
+                <a href="meusDados.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-purple">
                         <i class="fa-solid fa-address-card"></i>
                     </div>
                     <h3>Meu Cadastro Docente</h3>
                     <p>Você está conectado como <strong><?= escape_html($usuarioNome) ?></strong> com nível de privilégio <strong>Professor</strong>.</p>
                     <div class="dash-card-arrow">
-                        <span>Credenciais Válidas</span>
-                        <i class="fa-solid fa-lock"></i>
+                        <span>Gerenciar Cadastro</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                </div>
+                </a>
 
             <?php else: ?>
-                <div class="dash-card">
+                <a href="boletim.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-emerald">
                         <i class="fa-solid fa-book"></i>
                     </div>
                     <h3>Boletim & Desempenho</h3>
                     <p>Consulte suas notas, frequência nas aulas e comunicados emitidos pelos professores.</p>
                     <div class="dash-card-arrow">
-                        <span>Módulo Aluno</span>
-                        <i class="fa-solid fa-check"></i>
+                        <span>Acessar Boletim</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                </div>
+                </a>
 
-                <div class="dash-card">
+                <a href="secretaria.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-blue">
                         <i class="fa-solid fa-file-lines"></i>
                     </div>
                     <h3>Secretaria Virtual</h3>
                     <p>Solicite declarações de matrícula, atestados de frequência e histórico escolar.</p>
                     <div class="dash-card-arrow">
-                        <span>Módulo Aluno</span>
-                        <i class="fa-solid fa-check"></i>
+                        <span>Acessar Secretaria</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                </div>
+                </a>
 
-                <div class="dash-card">
+                <a href="meusDados.php" class="dash-card">
                     <div class="dash-icon-box dash-icon-purple">
                         <i class="fa-solid fa-circle-user"></i>
                     </div>
                     <h3>Meus Dados</h3>
                     <p>Conectado como <strong><?= escape_html($usuarioNome) ?></strong> com perfil <strong>Aluno</strong>. Acesso regular ativo.</p>
                     <div class="dash-card-arrow">
-                        <span>Conta Ativa</span>
-                        <i class="fa-solid fa-shield"></i>
+                        <span>Gerenciar Dados</span>
+                        <i class="fa-solid fa-arrow-right"></i>
                     </div>
-                </div>
+                </a>
             <?php endif; ?>
         </div>
     </div>

@@ -38,11 +38,19 @@ A aplicação reúne formulários com validações avançadas, proteção de cre
 - 🔐 **Autenticação Segura:** Login com hash `BCRYPT`, migração automática de senhas antigas e bloqueio temporário após 5 tentativas consecutivas incorretas (Rate Limiting).
 - 👁️ **Visualização de Senhas:** Alternância dinâmica de visibilidade de senha (*mostrar/ocultar*) em todos os formulários.
 - 📝 **Cadastro Público:** Criação de novos usuários com perfil padrão `Aluno` e validação de requisitos mínimos.
-- 📊 **Dashboard Executivo:** Painel administrativo com métricas rápidas (total de usuários, status da conexão e atalhos rápidos).
+- 📊 **Dashboard Executivo Multi-Perfil:** Painel personalizado de acordo com o nível do usuário (`Admin`, `Prof` ou `Aluno`).
 - 👥 **Gerenciamento Completo (Admin):**
   - Listagem com **pesquisa dinâmica em tempo real** (filtra por nome ou e-mail sem recarregar a página).
   - Edição de usuários com alteração opcional de senha e nível de privilégio.
   - Exclusão com confirmação e bloqueio de segurança contra autoexclusão da conta ativa.
+  - Cadastro de novos usuários com escolha de perfil mantendo a sessão do administrador ativa.
+- 🎓 **Portal do Aluno:**
+  - 📖 **Boletim & Desempenho (`boletim.php`):** Consulta de notas bimestrais, médias ponderadas, frequência e comunicados dos professores.
+  - 🏛️ **Secretaria Virtual (`secretaria.php`):** Emissão instantânea de declarações oficiais autenticadas com chave digital e protocolo único.
+  - 👤 **Meus Dados (`meusDados.php`):** Consulta do perfil e atualização de e-mail e senha pelo próprio aluno.
+- 👨‍🏫 **Portal do Professor:**
+  - 📋 **Diário de Classe (`diarioClasse.php`):** Lançamento e consulta de notas e faltas da turma.
+  - 🏫 **Turmas Atribuídas (`turmas.php`):** Carga horária, horários semanais e relação de estudantes.
 - 📄 **Relatório em PDF:** Emissão de documento analítico com cabeçalho institucional, data de emissão e linhas zebradas.
 - 🛡️ **Páginas de Erro Amigáveis:** Tratamento padronizado de exceções (400, 403, 404, 500) com interface visual integrada.
 

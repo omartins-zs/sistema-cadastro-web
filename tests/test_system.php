@@ -222,6 +222,20 @@ run_test("Professor é BLOQUEADO ao tentar acessar editar.php (HTTP 403)", funct
     return true;
 });
 
+run_test("Professor acessa Diário de Classe (diarioClasse.php)", function() use ($baseUrl, $cookieProf) {
+    $res = http_req("{$baseUrl}/diarioClasse.php", 'GET', [], $cookieProf);
+    if ($res['status'] !== 200) return "Status {$res['status']}";
+    if (!str_contains($res['body'], 'Diário de Classe')) return "Diário de classe não encontrado";
+    return true;
+});
+
+run_test("Professor acessa Turmas Atribuídas (turmas.php)", function() use ($baseUrl, $cookieProf) {
+    $res = http_req("{$baseUrl}/turmas.php", 'GET', [], $cookieProf);
+    if ($res['status'] !== 200) return "Status {$res['status']}";
+    if (!str_contains($res['body'], 'Turmas Atribuídas')) return "Turmas não encontradas";
+    return true;
+});
+
 // -------------------------------------------------------------
 // 4. PERFIL ALUNO (AlunoLucas)
 // -------------------------------------------------------------
@@ -239,6 +253,39 @@ run_test("Home do Aluno renderiza Portal do Estudante e Boletim", function() use
     if (!str_contains($res['body'], 'Estudante') || !str_contains($res['body'], 'Boletim')) {
         return "Elementos de Aluno não encontrados";
     }
+    return true;
+});
+
+run_test("Aluno acessa Boletim Escolar (boletim.php)", function() use ($baseUrl, $cookieAluno) {
+    $res = http_req("{$baseUrl}/boletim.php", 'GET', [], $cookieAluno);
+    if ($res['status'] !== 200) return "Status {$res['status']}";
+    if (!str_contains($res['body'], 'Boletim Escolar') || !str_contains($res['body'], 'Matemática')) {
+        return "Conteúdo do boletim não encontrado";
+    }
+    return true;
+});
+
+run_test("Aluno acessa Secretaria Virtual (secretaria.php)", function() use ($baseUrl, $cookieAluno) {
+    $res = http_req("{$baseUrl}/secretaria.php", 'GET', [], $cookieAluno);
+    if ($res['status'] !== 200) return "Status {$res['status']}";
+    if (!str_contains($res['body'], 'Secretaria Virtual') || !str_contains($res['body'], 'Solicitar Novo Documento')) {
+        return "Secretaria virtual não encontrada";
+    }
+    return true;
+});
+
+run_test("Aluno acessa Meus Dados Cadastrais (meusDados.php)", function() use ($baseUrl, $cookieAluno) {
+    $res = http_req("{$baseUrl}/meusDados.php", 'GET', [], $cookieAluno);
+    if ($res['status'] !== 200) return "Status {$res['status']}";
+    if (!str_contains($res['body'], 'Meus Dados Cadastrais') || !str_contains($res['body'], 'AlunoLucas')) {
+        return "Meus dados não encontrados";
+    }
+    return true;
+});
+
+run_test("Aluno é BLOQUEADO ao tentar acessar diário de classe (HTTP 403)", function() use ($baseUrl, $cookieAluno) {
+    $res = http_req("{$baseUrl}/diarioClasse.php", 'GET', [], $cookieAluno);
+    if ($res['status'] !== 403) return "Esperava 403 Forbidden, recebeu {$res['status']}";
     return true;
 });
 
